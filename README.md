@@ -1,3 +1,3 @@
 # grand framework
 
-# Mini blockchain project.
+# Mini blockchain project. Python.
