@@ -1,1 +1,3 @@
-# grand
+# grand framework
+
+# Mini blockchain project.
