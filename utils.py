@@ -25,5 +25,16 @@ class Utilities:
         for transaction in transactions:
             previousTreeLayer.append(transaction.id)
         
+        treeLayer = previousTreeLayer
+        while (count > 1):
+            treeLayer = []
+            for i in range(1, len(previousTreeLayer)):
+                treeLayer.append(Utilities.applySha256(previousTreeLayer[i-1] + previousTreeLayer[i]))
+            count = len(treeLayer)
+            previousTreeLayer = treeLayer
         
-        
+        return ((lambda: treeLayer[0], lambda: "")[len(treeLayer) == 1]())
+
+    def getDifficultyString(difficulty):
+        char = [""]*difficulty
+        return str(char[difficulty]).replace("\0", "0");
