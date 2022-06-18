@@ -22,4 +22,11 @@ verify = Utilities.verifyECDSA(publicKey, message, signature)
 print(verify)
 
 # Transaction
-transaction = Transaction()
+priv1 = PrivateKey()
+pub1 = priv1.publicKey()
+priv2 = PrivateKey()
+pub2 = priv2.publicKey()
+
+val = 0.1
+inputs = [1, 2, 3]
+transaction = Transaction(pub1, pub2, val, inputs)

@@ -4,6 +4,7 @@
 
 from hashlib import sha256
 from datetime import datetime
+from utils import Utilities
 
 class Block:
     hash = ""
@@ -19,8 +20,19 @@ class Block:
         self.hash = Block.calcHash(self)
     
     def calcHash(self):
-        calculatedHash = sha256(bytes(Block.prevHash + str(Block.timeStamp) + str(Block.nonce) + Block.merkleRoot, "utf-8"))
+        calculatedHash = sha256(bytes(self.prevHash + str(self.timeStamp) + str(self.nonce) + self.merkleRoot, "utf-8"))
         return calculatedHash
     
-    def mineBlock(diff):
-        pass
+    def addTransaction(self, transaction):
+        if (transaction == ""):
+            return False
+        
+        if (self.prevHash != "0"):
+            if (transaction.processTransaction() != True):
+                print("ERROR: Transaction failed to process")
+                return False
+        
+        self.transactions.append(transaction)
+        print("CONSOLE: Transaction successfully added to block")
+        return True
+
