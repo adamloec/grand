@@ -4,4 +4,4 @@
 
 # Grand
 
-Mini blockchain project. Python
+Blockchain. Python
