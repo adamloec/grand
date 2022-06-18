@@ -1,13 +1,15 @@
-
+# Author: Adam Loeckle
+# Date: 6/17/2022
+# Description: Block object and methods
 
 from hashlib import sha256
 from datetime import datetime
 
 class Block:
-    hash = ""
-    prevHash = ""
-    merkleRoot = ""
-    transactions = [""]
+    hash = None
+    prevHash = None
+    merkleRoot = None
+    transactions = []
     timeStamp = 0.0
     nonce = 0
 
@@ -16,9 +18,9 @@ class Block:
         self.timeStamp = datetime.now()
         self.hash = Block.calcHash()
     
-    def calcHash():
+    def calcHash(self):
         calculatedHash = sha256(Block.prevHash + str(Block.timeStamp) + str(Block.nonce) + Block.merkleRoot)
         return calculatedHash
     
-    def mineBlock(diff):
+    def mineBlock(self, diff):
         pass

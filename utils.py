@@ -1,3 +1,6 @@
+# Author: Adam Loeckle
+# Date: 6/17/2022
+# Description: Utility methods
 
 from hashlib import sha256
 from ellipticcurve.ecdsa import Ecdsa
@@ -15,4 +18,12 @@ class Utilities:
     def verifyECDSA(publicKey, input, signature):
         return Ecdsa.verify(input, signature, publicKey)
     
-    
+    def getMerkle(transactions):
+        count = len(transactions)
+        previousTreeLayer = []
+
+        for transaction in transactions:
+            previousTreeLayer.append(transaction.id)
+        
+        
+        
