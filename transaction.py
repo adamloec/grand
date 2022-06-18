@@ -23,3 +23,11 @@ class Transaction:
         self.sequence += 1
         return Utilities.applySha256()
     
+    def generateSig(self, privateKey):
+        data = Utilities.getStringFromKey(self.sender) + Utilities.getStringFromKey(self.recipient) + str(self.value)
+        self.signature = Utilities.applyECDSA(privateKey, data)
+    
+    def verifySig(self):
+        data = Utilities.getStringFromKey(self.sender) + Utilities.getStringFromKey(self.recipient) + str(self.value)
+        return Utilities.verifyECDSA(self.sender, data, self.signature)
+        

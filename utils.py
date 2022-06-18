@@ -38,3 +38,6 @@ class Utilities:
     def getDifficultyString(difficulty):
         char = [""]*difficulty
         return str(char[difficulty]).replace("\0", "0");
+    
+    def getStringFromKey(key):
+        return key.toString
