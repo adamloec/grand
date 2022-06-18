@@ -1,5 +1,7 @@
-![](grand.png)
+<p align="center">
+  <img src="grand.png" />
+</p>
 
-# grand
+# Grand
 
 Mini blockchain project. Python
