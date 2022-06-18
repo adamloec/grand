@@ -1,3 +1,3 @@
 # grand
 
-Mini blockchain project, for fun.
+Mini blockchain project. Python
