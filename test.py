@@ -6,3 +6,12 @@ from block import Block
 from utils import Utilities
 from transaction import Transaction
 
+from ellipticcurve.ecdsa import Ecdsa
+from ellipticcurve.privateKey import PrivateKey
+
+block = Block('janwdoiuboiubajfwf')
+print(block.calcHash())
+
+
+
+transaction = Transaction()
