@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="grand.png" />
+  <img src="logo/grand.png" />
 </p>
 
 # Grand
