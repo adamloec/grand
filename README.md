@@ -2,6 +2,6 @@
   <img src="grand.png" />
 </p>
 
-#Grand
+# Grand
 
 A CUDA driven neural network modeling framework. Thanks to NNFS.
