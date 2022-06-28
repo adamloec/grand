@@ -4,4 +4,4 @@
 
 # Grand
 
-A CUDA driven neural network modeling framework. Thanks to NNFS.
+A CUDA driven neural network modeling framework.
