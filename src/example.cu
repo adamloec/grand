@@ -11,34 +11,6 @@ __global__ void addKernel(int *c, const int *a, const int *b)
     c[i] = a[i] + b[i];
 }
 
-int main()
-{
-    const int arraySize = 5;
-    const int a[arraySize] = { 1, 2, 3, 4, 5 };
-    const int b[arraySize] = { 10, 20, 30, 40, 50 };
-    int c[arraySize] = { 0 };
-
-    // Add vectors in parallel.
-    cudaError_t cudaStatus = addWithCuda(c, a, b, arraySize);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "addWithCuda failed!");
-        return 1;
-    }
-
-    printf("{1,2,3,4,5} + {10,20,30,40,50} = {%d,%d,%d,%d,%d}\n",
-        c[0], c[1], c[2], c[3], c[4]);
-
-    // cudaDeviceReset must be called before exiting in order for profiling and
-    // tracing tools such as Nsight and Visual Profiler to show complete traces.
-    cudaStatus = cudaDeviceReset();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaDeviceReset failed!");
-        return 1;
-    }
-
-    return 0;
-}
-
 // Helper function for using CUDA to add vectors in parallel.
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size)
 {
@@ -117,4 +89,90 @@ Error:
     cudaFree(dev_b);
     
     return cudaStatus;
+}
+
+// Matrices are stored in row-major order:
+// M(row, col) = *(M.elements + row * M.width + col)
+typedef struct {
+    int width;
+    int height;
+    float* elements;
+} Matrix;
+
+// Thread block size
+#define BLOCK_SIZE 16
+
+// Forward declaration of the matrix multiplication kernel
+__global__ void MatMulKernel(const Matrix, const Matrix, Matrix);
+
+// Matrix multiplication - Host code
+// Matrix dimensions are assumed to be multiples of BLOCK_SIZE
+void MatMul(const Matrix A, const Matrix B, Matrix C)
+{
+    // Load A and B to device memory
+    Matrix d_A;
+    d_A.width = A.width; d_A.height = A.height;
+    size_t size = A.width * A.height * sizeof(float);
+    cudaMalloc(&d_A.elements, size);
+    cudaMemcpy(d_A.elements, A.elements, size,
+               cudaMemcpyHostToDevice);
+    Matrix d_B;
+    d_B.width = B.width; d_B.height = B.height;
+    size = B.width * B.height * sizeof(float);
+    cudaMalloc(&d_B.elements, size);
+    cudaMemcpy(d_B.elements, B.elements, size,
+               cudaMemcpyHostToDevice);
+
+    // Allocate C in device memory
+    Matrix d_C;
+    d_C.width = C.width; d_C.height = C.height;
+    size = C.width * C.height * sizeof(float);
+    cudaMalloc(&d_C.elements, size);
+
+    // Invoke kernel
+    dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
+    dim3 dimGrid(B.width / dimBlock.x, A.height / dimBlock.y);
+    MatMulKernel<<<dimGrid, dimBlock>>>(d_A, d_B, d_C);
+
+    // Read C from device memory
+    cudaMemcpy(C.elements, d_C.elements, size,
+               cudaMemcpyDeviceToHost);
+
+    // Free device memory
+    cudaFree(d_A.elements);
+    cudaFree(d_B.elements);
+    cudaFree(d_C.elements);
+}
+
+// Matrix multiplication kernel called by MatMul()
+__global__ void MatMulKernel(Matrix A, Matrix B, Matrix C)
+{
+    // Each thread computes one element of C
+    // by accumulating results into Cvalue
+    float Cvalue = 0;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    for (int e = 0; e < A.width; ++e)
+        Cvalue += A.elements[row * A.width + e]
+                * B.elements[e * B.width + col];
+    C.elements[row * C.width + col] = Cvalue;
+}
+
+int main()
+{
+    Matrix a;
+    Matrix b;
+    Matrix c;
+
+    a.width = 2;
+    a.height = 2;
+    b.width = 2;
+    b.height = 2;
+    c.width = 2;
+    c.height = 2;
+
+    
+
+    cudaDeviceReset();
+    return 0;
 }

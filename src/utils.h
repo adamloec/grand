@@ -1,6 +1,8 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 
 // Thread block size
 #define BLOCK_SIZE 16
