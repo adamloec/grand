@@ -13,9 +13,9 @@ typedef struct
 {
     int width;
     int height;
-    float *data;
+    float **data;
 } Tensor;
 
 
 
-cudaError_t add(int *c, const int *a, const int *b, unsigned int size, int device);
+cudaError_t add(Tensor c, Tensor a, Tensor b, int device);
