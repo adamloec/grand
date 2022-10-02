@@ -16,9 +16,39 @@ cudaError_t add(int *c, const int *a, const int *b, unsigned int size, int devic
     cudaStatus = cudaSetDevice(device);
     if (cudaStatus != cudaSuccess) 
     {
-        fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
+        fprintf(stderr, "ERROR: Cuda enabled device {Device: %d} not found.\n", device);
         goto Error;
     }
+
+    // Allocate mem on device
+    cudaStatus = cudaMalloc((void**)&dev_c, size * sizeof(int));
+    cudaStatus = cudaMalloc((void**)&dev_a, size * sizeof(int));
+    cudaStatus = cudaMalloc((void**)&dev_b, size * sizeof(int));
+
+    // Copy input matrixes to memory
+    cudaStatus = cudaMemcpy(dev_a, a, size * sizeof(int), cudaMemcpyHostToDevice);
+    cudaStatus = cudaMemcpy(dev_b, b, size * sizeof(int), cudaMemcpyHostToDevice);
+
+    addKernal<<<1, size>>>(dev_c, dev_a, dev_b);
+
+    // Check for kernel errors
+    cudaStatus = cudaGetLastError();
+    if (cudaStatus != cudaSuccess) 
+    {
+        fprintf(stderr, "ERROR: Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+        goto Error;
+    }
+    
+    // Kernel synchronize, checks for kernel errors
+    cudaStatus = cudaDeviceSynchronize();
+    if (cudaStatus != cudaSuccess) 
+    {
+        fprintf(stderr, "ERROR: Kernel synchronize failed: %d\n", cudaStatus);
+        goto Error;
+    }
+
+    // Copy output matrix to memory
+    cudaStatus = cudaMemcpy(c, dev_c, size * sizeof(int), cudaMemcpyDeviceToHost);
 
     Error:
         cudaFree(dev_c);
@@ -39,20 +69,13 @@ int main()
     cudaError_t cudaStatus = add(c, a, b, arraySize);
     if (cudaStatus != cudaSuccess) 
     {
-        fprintf(stderr, "ERROR: Addition failed.");
+        fprintf(stderr, "ERROR: Addition failed.\n");
         return 1;
     }
 
-    printf("{1,2,3,4,5} + {10,20,30,40,50} = {%d,%d,%d,%d,%d}\n",
-        c[0], c[1], c[2], c[3], c[4]);
+    printf("{1,2,3,4,5} + {10,20,30,40,50} = {%d,%d,%d,%d,%d}\n", c[0], c[1], c[2], c[3], c[4]);
 
-    // cudaDeviceReset must be called before exiting in order for profiling and
-    // tracing tools such as Nsight and Visual Profiler to show complete traces.
     cudaStatus = cudaDeviceReset();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaDeviceReset failed!");
-        return 1;
-    }
 
     return 0;
 }
