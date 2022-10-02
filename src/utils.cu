@@ -1,16 +1,19 @@
 #include "utils.h"
 
-__global__ void addKernal(int *c, const int *a, const int *b)
+__global__ void addKernel(Tensor c, Tensor a, Tensor b)
 {
-    int i = threadIdx.x;
-    c[i] = a[i] + b[i];
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    int j = blockIdx.y * blockDim.y + threadIdx.y;
+
+    
 }
 
-cudaError_t add(int *c, const int *a, const int *b, unsigned int size, int device=0)
+cudaError_t add(Tensor c, Tensor a, Tensor b, int device=0)
 {
-    int *dev_a = 0;
-    int *dev_b = 0;
-    int *dev_c = 0;
+    Tensor dev_a;
+    Tensor dev_b;
+    Tensor dev_c;
+    size_t size;
     cudaError_t cudaStatus;
 
     cudaStatus = cudaSetDevice(device);
@@ -20,25 +23,30 @@ cudaError_t add(int *c, const int *a, const int *b, unsigned int size, int devic
         goto Error;
     }
 
-    // Allocate mem on device
-    cudaStatus = cudaMalloc((void**)&dev_c, size * sizeof(int));
-    cudaStatus = cudaMalloc((void**)&dev_a, size * sizeof(int));
-    cudaStatus = cudaMalloc((void**)&dev_b, size * sizeof(int));
+    // Initialize input tensors and copy to memory
+    dev_a.width = a.width; 
+    dev_a.height = a.height;
+    size = a.width * a.height * sizeof(float);
+    cudaMalloc(&dev_a.data, size);
+    cudaMemcpy(dev_a.data, a.data, size, cudaMemcpyHostToDevice);
 
-    // Copy input matrixes to memory
-    cudaStatus = cudaMemcpy(dev_a, a, size * sizeof(int), cudaMemcpyHostToDevice);
-    cudaStatus = cudaMemcpy(dev_b, b, size * sizeof(int), cudaMemcpyHostToDevice);
+    dev_b.width = b.width;
+    dev_b.height = b.height;
+    size = b.width * b.height * sizeof(float);
+    cudaMalloc(&dev_b.data, size);
+    cudaMemcpy(dev_b.data, b.data, size, cudaMemcpyHostToDevice);
 
-    addKernal<<<1, size>>>(dev_c, dev_a, dev_b);
+    // Initialize output tensor and copy to memory
+    dev_c.width = c.width; 
+    dev_c.height = c.height;
+    size = c.width * c.height * sizeof(float);
+    cudaMalloc(&dev_c.data, size);
 
-    // Check for kernel errors
-    cudaStatus = cudaGetLastError();
-    if (cudaStatus != cudaSuccess) 
-    {
-        fprintf(stderr, "ERROR: Kernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
-        goto Error;
-    }
-    
+    // Generate kernel dimensions, invoke kernel
+    dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
+    dim3 dimGrid(b.width / dimBlock.x, a.height / dimBlock.y);
+    addKernel<<<dimGrid, dimBlock>>>(dev_a, dev_b, dev_c);
+
     // Kernel synchronize, checks for kernel errors
     cudaStatus = cudaDeviceSynchronize();
     if (cudaStatus != cudaSuccess) 
@@ -47,26 +55,21 @@ cudaError_t add(int *c, const int *a, const int *b, unsigned int size, int devic
         goto Error;
     }
 
-    // Copy output matrix to memory
-    cudaStatus = cudaMemcpy(c, dev_c, size * sizeof(int), cudaMemcpyDeviceToHost);
+    // Read output tensor from memory
+    cudaMemcpy(c.data, dev_c.data, size, cudaMemcpyDeviceToHost);
 
     Error:
-        cudaFree(dev_c);
-        cudaFree(dev_a);
-        cudaFree(dev_b);
+        cudaFree(dev_c.data);
+        cudaFree(dev_a.data);
+        cudaFree(dev_b.data);
         
         return cudaStatus;
 }
 
 int main()
 {
-    const int arraySize = 5;
-    const int a[arraySize] = {1, 2, 3, 4, 5};
-    const int b[arraySize] = {10, 20, 30, 40, 50};
-    int c[arraySize] = { 0 };
-
     // Add vectors in parallel.
-    cudaError_t cudaStatus = add(c, a, b, arraySize);
+    cudaError_t cudaStatus = add();
     if (cudaStatus != cudaSuccess) 
     {
         fprintf(stderr, "ERROR: Addition failed.\n");
@@ -75,7 +78,7 @@ int main()
 
     printf("{1,2,3,4,5} + {10,20,30,40,50} = {%d,%d,%d,%d,%d}\n", c[0], c[1], c[2], c[3], c[4]);
 
-    cudaStatus = cudaDeviceReset();
+    cudaDeviceReset();
 
     return 0;
 }
