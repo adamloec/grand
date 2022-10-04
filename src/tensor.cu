@@ -19,9 +19,8 @@ namespace Grand
     // vector<vector<float>> matrix = 2d matrix input.
     // tensor(matrix) = Initializes the value of vector<vector<float>> tensor to matrix input.
     // ===============================================
-    Tensor::Tensor(vector<vector<float>> matrix)
+    Tensor::Tensor(vector<vector<float>> matrix) : tensor(matrix)
     {
-        tensor = matrix;
         width = setWidth(); 
         height = setHeight();
     }
