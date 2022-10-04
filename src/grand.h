@@ -1,11 +1,15 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include <stdio.h>
-#include <iostream>
-using namespace std;
 
-#include "math.h"
-#ifndef INCL_TENSOR
+#ifndef CORE_INCL
+#define CORE_INCL
+    #include <stdio.h>
+    #include <iostream>
+    #include <vector>
+    using namespace std;
+#endif
+#ifndef TENSOR_INCL
+#define TENSOR_INCL
     #include "tensor.h"
 #endif
 

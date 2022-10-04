@@ -3,9 +3,7 @@
 int main()
 {
     vector<vector<float>> data{{1, 2}, {3, 4}};
-    Grand::Tensor a(data);
-    Grand::Zeros b(5, 5);
-    a.print();
-    b.print();
+    Grand::Tensor::Matrix a(data);
+    a.getTensor();
     return 0;
 }

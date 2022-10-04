@@ -1,4 +1,8 @@
-#include "math.h"
+#ifndef MATH_INCL
+#define MATH_INCL
+    #include "math.h"
+#endif
+using namespace Grand;
 
 __global__ void addKernel(Tensor c, Tensor a, Tensor b)
 {

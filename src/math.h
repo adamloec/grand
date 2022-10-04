@@ -1,4 +1,6 @@
-#define INCL_TENSOR
-#include "tensor.h"
+#ifndef TENSOR_INCL
+#define TENSOR_INCL
+    #include "tensor.h"
+#endif
 
-cudaError_t add(Tensor c, Tensor a, Tensor b, int device);
+cudaError_t add(Grand::Tensor::Matrix c, Grand::Tensor::Matrix a, Grand::Tensor::Matrix b, int device);
