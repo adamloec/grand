@@ -5,6 +5,7 @@
 // ===============================================
 
 #include <vector>
+using namespace std;
 
 namespace Grand
 {
@@ -31,8 +32,8 @@ namespace Grand
             // ===============================================
             // Tensor object functions.
             // ===============================================
-            int setWidth(void);
-            int setHeight(void);
+            int setWidth();
+            int setHeight();
             void getTensor();
     };
 

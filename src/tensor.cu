@@ -29,14 +29,14 @@ namespace Grand
     // ===============================================
     Tensor::Tensor(vector<vector<float>> matrix) : tensor(matrix)
     {
-        width = setWidth(); 
+        width = setWidth();
         height = setHeight();
     }
 
     // ===============================================
     // Set helper function, sets tensor object width.
     // ===============================================
-    int Tensor::setWidth(void)
+    int Tensor::setWidth()
     {
         return tensor.size();
     }
@@ -44,7 +44,7 @@ namespace Grand
     // ===============================================
     // Set helper function, sets tensor object height.
     // ===============================================
-    int Tensor::setHeight(void)
+    int Tensor::setHeight()
     {
         return tensor[0].size();
     }
