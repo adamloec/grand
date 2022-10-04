@@ -1,34 +1,78 @@
-// Tensor struct
-// width: width of matrix
-// height: height of matrix
-// data: 2d matrix
+// ===============================================
+// Author: Adam Loeckle
+// Date: 10/3/2022
+// Description: Tensor object.
+// ===============================================
+
+#include <vector>
+
+// ===============================================
+// Tensor object.
+//
+// vector<vector<float>> tensor = 2d vector tensor.
+// int width = width of matrix.
+// int height = height of matrix.
+// ===============================================
 class Tensor
 {
     public:
-        float **data = NULL;
+        vector<vector<float>> tensor;
         int width = 0;
         int height = 0;
 
+        // ===============================================
+        // Default tensor constructor, nothing.
+        // ===============================================
         Tensor() = default;
-        Tensor(float **matrix) : data(matrix) {width = getWidth(); height = getHeight();}
 
-        int getWidth(void)
+        // ===============================================
+        // Input matrix tensor constructor.
+        //
+        // vector<vector<float>> matrix = 2d matrix input.
+        // tensor(matrix) = Initializes the value of vector<vector<float>> tensor to matrix input.
+        // ===============================================
+        Tensor(vector<vector<float>> matrix) : tensor(matrix) {width = setWidth(); height = setHeight();}
+        
+        // ===============================================
+        // Zeros and ones tensor constructor.
+        //
+        // int c = Variable input, 0 = zeros tensor, 1 = ones tensor.
+        // int w = Desired width of tensor.
+        // int h = Desired height of tensor.
+        // ===============================================
+        Tensor(int c, int w, int h) : width(w), height(h)
         {
-            return sizeof(data)/sizeof(data[0]);
+            if (c == 0) { tensor = vector<vector<float>> (width, vector<float> (height, 0.0)); }
+
+            if (c == 1) { tensor = vector<vector<float>> (width, vector<float> (height, 1.0)); }
         }
 
-        int getHeight(void)
+        // ===============================================
+        // Set helper function, sets tensor object width.
+        // ===============================================
+        int setWidth(void)
         {
-            return sizeof(data[0])/sizeof(float);
+            return tensor.size();
         }
 
+        // ===============================================
+        // Set helper function, sets tensor object height.
+        // ===============================================
+        int setHeight(void)
+        {
+            return tensor[0].size();
+        }
+
+        // ===============================================
+        // Print tensor data in matrix format.
+        // ===============================================
         void print()
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < height; j++)
                 {
-                    cout << data[i][j] << " ";
+                    cout << tensor[i][j] << " ";
                 }
                 cout << endl;
             }
