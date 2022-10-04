@@ -1,12 +1,10 @@
-#include "utils.h"
-
-// https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+#include "math.h"
 
 __global__ void addKernel(Tensor c, Tensor a, Tensor b)
 {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = blockIdx.y * blockDim.y + threadIdx.y;
-
+    
     c.data[i][j] = a.data[i][j] + b.data[i][j];
 }
 
@@ -19,7 +17,7 @@ cudaError_t add(Tensor c, Tensor a, Tensor b, int device=0)
     cudaError_t cudaStatus;
 
     dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
-    dim3 dimGrid(b.width / dimBlock.x, a.height / dimBlock.y);
+    dim3 dimGrid(a.height / dimBlock.x, a.height / dimBlock.y);
 
     // CUDA device check
     cudaStatus = cudaSetDevice(device);
@@ -131,8 +129,9 @@ int main()
     {
         for (int j = 0; j < 2; j++)
         {
-            fprintf(stderr, "%f ", c.data[i][j]);
+            cout << c.data[i][j];
         }
+        cout << endl;
     }
 
 

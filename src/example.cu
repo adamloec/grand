@@ -2,6 +2,8 @@
 #include "device_launch_parameters.h"
 
 #include <stdio.h>
+#include <iostream>
+using namespace std;
 
 cudaError_t addWithCuda(int *c, const int *a, const int *b, unsigned int size);
 
@@ -100,10 +102,26 @@ typedef struct {
 } Matrix;
 
 // Thread block size
-#define BLOCK_SIZE 16
+#define BLOCK_SIZE 2
 
-// Forward declaration of the matrix multiplication kernel
-__global__ void MatMulKernel(const Matrix, const Matrix, Matrix);
+// Matrix multiplication kernel called by MatMul()
+__global__ void MatMulKernel(Matrix A, Matrix B, Matrix C)
+{
+    // Each thread computes one element of C
+    // by accumulating results into Cvalue
+    float Cvalue = 0;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+    for (int e = 0; e < A.width; ++e)
+    {
+        Cvalue += A.elements[row * A.width + e] * B.elements[e * B.width + col];
+        printf("A: %f\n", A.elements[row * A.width + e]);
+        printf("B: %f\n", B.elements[e * B.width + col]);
+        printf("C: %f\n", Cvalue);
+    }
+    C.elements[row * C.width + col] = Cvalue;
+}
+
 
 // Matrix multiplication - Host code
 // Matrix dimensions are assumed to be multiples of BLOCK_SIZE
@@ -144,34 +162,66 @@ void MatMul(const Matrix A, const Matrix B, Matrix C)
     cudaFree(d_C.elements);
 }
 
-// Matrix multiplication kernel called by MatMul()
-__global__ void MatMulKernel(Matrix A, Matrix B, Matrix C)
-{
-    // Each thread computes one element of C
-    // by accumulating results into Cvalue
-    float Cvalue = 0;
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-    for (int e = 0; e < A.width; ++e)
-        Cvalue += A.elements[row * A.width + e]
-                * B.elements[e * B.width + col];
-    C.elements[row * C.width + col] = Cvalue;
-}
-
 int main()
 {
     Matrix a;
     Matrix b;
     Matrix c;
 
-    a.width = 2;
-    a.height = 2;
-    b.width = 2;
-    b.height = 2;
-    c.width = 2;
+    // Test data
     c.height = 2;
+    c.width = 2;
+    a.height = 2;
+    a.width = 2;
+    b.height = 2;
+    b.width = 2;
+    float num = 0.0;
+    a.elements = new float[a.height*a.width];
+    b.elements = new float[b.height*b.width];
+    c.elements = new float[c.height*c.width];
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            num += 1.0;
+            cout << num << endl;
+            *(c.elements + i * c.height + j) = 0.0;
+            *(a.elements + i * a.height + j) = num;
+            *(b.elements + i * b.height + j) = num + 1.0;
+        }
+    }
 
-    
+    MatMul(a, b, c);
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            cout << *(a.elements + i * 2 + j) << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            cout << *(b.elements + i * 2 + j) << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+
+    for (int i = 0; i < 2; i++)
+    {
+        for (int j = 0; j < 2; j++)
+        {
+            cout << *(c.elements + i * 2 + j) << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
 
     cudaDeviceReset();
     return 0;
