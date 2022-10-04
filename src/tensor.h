@@ -22,22 +22,17 @@ namespace Grand
             int width = 0;
             int height = 0;
 
+            // ===============================================
+            // Tensor object constructors.
+            // ===============================================
             Tensor();
             Tensor(vector<vector<float>> matrix);
 
             // ===============================================
-            // Set helper function, sets tensor object width.
+            // Tensor object functions.
             // ===============================================
             int setWidth(void);
-
-            // ===============================================
-            // Set helper function, sets tensor object height.
-            // ===============================================
             int setHeight(void);
-
-            // ===============================================
-            // Print helper function, prints tensor data in matrix format.
-            // ===============================================
             void getTensor();
     };
 

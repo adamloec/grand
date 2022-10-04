@@ -9,6 +9,14 @@
 namespace Grand
 {
     // ===============================================
+    // Tensor object.
+    //
+    // vector<vector<float>> tensor = 2d vector tensor.
+    // int width = width of matrix.
+    // int height = height of matrix.
+    // ===============================================
+
+    // ===============================================
     // Default tensor constructor, nothing.
     // ===============================================
     Tensor::Tensor() = default;
@@ -55,5 +63,4 @@ namespace Grand
             cout << endl;
         }
     }
-    
 }
