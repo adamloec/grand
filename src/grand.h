@@ -12,7 +12,4 @@
     #include "tensor.h"
 #endif
 
-// Thread block size
-#define BLOCK_SIZE 2
-
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/

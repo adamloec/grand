@@ -26,9 +26,10 @@ namespace Grand
         class Matrix
         {
             public:
-                vector<vector<float>> tensor;
+                vector<vector<float>> matrix;
                 int width = 0;
                 int height = 0;
+                float *tensor;
 
                 // ===============================================
                 // Tensor object constructors.
@@ -41,7 +42,7 @@ namespace Grand
                 // ===============================================
                 int setWidth();
                 int setHeight();
-                void getTensor();
+                float* setTensor(vector<vector<float>> mat);
         };
 
         // ===============================================

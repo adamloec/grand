@@ -2,8 +2,7 @@
 
 int main()
 {
-    vector<vector<float>> data{{1, 2}, {3, 4}};
+    vector<vector<float>> data{{1, 2, 3}, {3, 4, 5}, {5, 6, 7}};
     Grand::Tensor::Matrix a(data);
-    a.getTensor();
     return 0;
 }

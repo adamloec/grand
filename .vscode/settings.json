@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "queue": "cpp",
+        "random": "cpp",
+        "ostream": "cpp",
+        "xiosbase": "cpp"
     }
 }

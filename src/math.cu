@@ -4,24 +4,32 @@
 #endif
 using namespace Grand;
 
-__global__ void addKernel(Tensor c, Tensor a, Tensor b)
+// Thread block size
+#define BLOCK_SIZE 2
+
+__global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
 {
-    int i = blockIdx.x * blockDim.x + threadIdx.x;
-    int j = blockIdx.y * blockDim.y + threadIdx.y;
+    int row = blockIdx.y * blockDim.y + threadIdx.y;
+    int col = blockIdx.x * blockDim.x + threadIdx.x;
+
+    printf("ROW: %d\n", row);
+    printf("COL: %d\n", col);
+    printf("A: %f B: %f\n", a.tensor[row], b.tensor[row]);
     
-    c.data[i][j] = a.data[i][j] + b.data[i][j];
+    if (row < b.width && col < a.height)
+        c.tensor[row] = a.tensor[row] + b.tensor[row];
 }
 
-cudaError_t add(Tensor c, Tensor a, Tensor b, int device=0)
+cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device=0)
 {
-    Tensor dev_a;
-    Tensor dev_b;
-    Tensor dev_c;
+    Tensor::Matrix dev_a;
+    Tensor::Matrix dev_b;
+    Tensor::Matrix dev_c;
     size_t size;
     cudaError_t cudaStatus;
 
     dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
-    dim3 dimGrid(a.height / dimBlock.x, a.height / dimBlock.y);
+    dim3 dimGrid(b.width / dimBlock.x, a.height / dimBlock.y);
 
     // CUDA device check
     cudaStatus = cudaSetDevice(device);
@@ -38,24 +46,24 @@ cudaError_t add(Tensor c, Tensor a, Tensor b, int device=0)
         goto Error;
     }
 
-    // Constant width/height dimensions for Tensors
-    size = a.width * a.height * sizeof(float);
-
     // Initialize input tensors and copy to memory
     dev_a.width = a.width;
     dev_a.height = a.height;
-    cudaMalloc(&dev_a.data, size);
-    cudaMemcpy(dev_a.data, a.data, size, cudaMemcpyHostToDevice);
+    size = a.width * a.height * sizeof(float);
+    cudaMalloc(&dev_a.tensor, size);
+    cudaMemcpy(dev_a.tensor, a.tensor, size, cudaMemcpyHostToDevice);
 
     dev_b.width = b.width;
     dev_b.height = b.height;
-    cudaMalloc(&dev_b.data, size);
-    cudaMemcpy(dev_b.data, b.data, size, cudaMemcpyHostToDevice);
+    size = b.width * b.height * sizeof(float);
+    cudaMalloc(&dev_b.tensor, size);
+    cudaMemcpy(dev_b.tensor, b.tensor, size, cudaMemcpyHostToDevice);
 
     // Initialize output tensor and copy to memory
     dev_c.width = c.width;
     dev_c.height = c.height;
-    cudaMalloc(&dev_c.data, size);
+    size = c.width * c.height * sizeof(float);
+    cudaMalloc(&dev_c.tensor, size);
 
     // Generate kernel dimensions, invoke kernel
     addKernel<<<dimGrid, dimBlock>>>(dev_c, dev_a, dev_b);
@@ -69,56 +77,29 @@ cudaError_t add(Tensor c, Tensor a, Tensor b, int device=0)
     }
 
     // Read output tensor from memory
-    cudaStatus = cudaMemcpy(c.data, dev_c.data, size, cudaMemcpyDeviceToHost);
+    cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
+    if (cudaStatus != cudaSuccess) 
+    {
+        fprintf(stderr, "ERROR: CUDAMEMCPY: %d\n", cudaStatus);
+        goto Error;
+    }
 
 Error:
-    cudaFree(dev_c.data);
-    cudaFree(dev_a.data);
-    cudaFree(dev_b.data);
+    cudaFree(dev_c.tensor);
+    cudaFree(dev_a.tensor);
+    cudaFree(dev_b.tensor);
 
     return cudaStatus;
 }
 
 int main()
 {
-    Tensor c;
-    Tensor a;
-    Tensor b;
-
-    // Test data
+    vector<vector<float>> data{{1, 2}, {3, 4}};
+    Grand::Tensor::Matrix a(data);
+    Grand::Tensor::Matrix b(data);
+    Grand::Tensor::Matrix c;
     c.height = 2;
     c.width = 2;
-    c.data = new float*[2];
-    for (int i = 0; i < 2; i++)
-    {
-        c.data[i] = new float[2];
-    }
-
-    a.height = 2;
-    a.width = 2;
-    a.data = new float*[2];
-    for (int i = 0; i < 2; i++)
-    {
-        a.data[i] = new float[2];
-    }
-
-    a.data[0][0] = 1.0;
-    a.data[0][1] = 2.0;
-    a.data[1][0] = 3.0;
-    a.data[1][1] = 4.0;
-
-    b.height = 2;
-    b.width = 2;
-    b.data = new float*[2];
-    for (int i = 0; i < 2; i++)
-    {
-        b.data[i] = new float[2];
-    }
-
-    b.data[0][0] = 1.0;
-    b.data[0][1] = 2.0;
-    b.data[1][0] = 3.0;
-    b.data[1][1] = 4.0;
 
     // Add vectors in parallel.
     cudaError_t cudaStatus = add(c, a, b);
@@ -129,19 +110,15 @@ int main()
     }
 
     // Output
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < c.width*c.height; i++)
     {
-        for (int j = 0; j < 2; j++)
-        {
-            cout << c.data[i][j];
-        }
+        cout << "C: " << c.tensor[i];
         cout << endl;
     }
 
-
-    free(c.data);
-    free(a.data);
-    free(b.data);
+    free(c.tensor);
+    free(a.tensor);
+    free(b.tensor);
 
     cudaDeviceReset();
 

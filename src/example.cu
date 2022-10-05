@@ -115,9 +115,6 @@ __global__ void MatMulKernel(Matrix A, Matrix B, Matrix C)
     for (int e = 0; e < A.width; ++e)
     {
         Cvalue += A.elements[row * A.width + e] * B.elements[e * B.width + col];
-        printf("A: %f\n", A.elements[row * A.width + e]);
-        printf("B: %f\n", B.elements[e * B.width + col]);
-        printf("C: %f\n", Cvalue);
     }
     C.elements[row * C.width + col] = Cvalue;
 }

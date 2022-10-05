@@ -32,10 +32,11 @@ namespace Grand
         // vector<vector<float>> matrix = 2d matrix input.
         // tensor(matrix) = Initializes the value of vector<vector<float>> tensor to matrix input.
         // ===============================================
-        Matrix::Matrix(vector<vector<float>> matrix) : tensor(matrix)
+        Matrix::Matrix(vector<vector<float>> matrix) : matrix(matrix)
         {
             width = setWidth();
             height = setHeight();
+            tensor = setTensor(matrix);
         }
 
         // ===============================================
@@ -43,7 +44,7 @@ namespace Grand
         // ===============================================
         int Matrix::setWidth()
         {
-            return tensor.size();
+            return matrix.size();
         }
 
         // ===============================================
@@ -51,22 +52,25 @@ namespace Grand
         // ===============================================
         int Matrix::setHeight()
         {
-            return tensor[0].size();
+            return matrix[0].size();
         }
 
         // ===============================================
-        // Print helper function, prints tensor data in matrix format.
+        // 2d Vector -> 2d Array converter function for CUDA kernel methods.
         // ===============================================
-        void Matrix::getTensor()
+        float* Matrix::setTensor(vector<vector<float>> mat)
         {
+            float *temp = new float[width*height];
+            int count = 0;
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    cout << tensor[i][j] << " ";
+                    temp[count] = mat[i][j];
+                    count++;
                 }
-                cout << endl;
             }
+            return temp;
         }
 
         // ===============================================
@@ -92,7 +96,8 @@ namespace Grand
         {
             width = w; 
             height = h; 
-            tensor = vector<vector<float>> (width, vector<float> (height, 0.0));
+            matrix = vector<vector<float>> (width, vector<float> (height, 0.0));
+            tensor = setTensor(matrix);
         }
 
         // ===============================================
@@ -118,7 +123,8 @@ namespace Grand
         {
             width = w; 
             height = h; 
-            tensor = vector<vector<float>> (width, vector<float> (height, 1.0));
+            matrix = vector<vector<float>> (width, vector<float> (height, 1.0));
+            tensor = setTensor(matrix);
         }
     }
 }
