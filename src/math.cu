@@ -77,7 +77,7 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
     }
 
     // Read output tensor from memory
-    cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
+    //cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
     if (cudaStatus != cudaSuccess) 
     {
         fprintf(stderr, "ERROR: CUDAMEMCPY: %d\n", cudaStatus);
@@ -110,11 +110,11 @@ int main()
     }
 
     // Output
-    for (int i = 0; i < c.width*c.height; i++)
-    {
-        cout << "C: " << c.tensor[i];
-        cout << endl;
-    }
+    // for (int i = 0; i < c.width*c.height; i++)
+    // {
+    //     cout << "C: " << c.tensor[i];
+    //     cout << endl;
+    // }
 
     free(c.tensor);
     free(a.tensor);
