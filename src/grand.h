@@ -1,8 +1,7 @@
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
-
 #ifndef CORE_INCL
 #define CORE_INCL
+    #include "cuda_runtime.h"
+    #include "device_launch_parameters.h"
     #include <stdio.h>
     #include <iostream>
     #include <vector>
