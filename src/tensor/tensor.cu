@@ -24,7 +24,7 @@ namespace Grand
         // ===============================================
         // Default tensor constructor, nothing.
         // ===============================================
-        Matrix::Matrix(){}
+        Matrix::Matrix() = default;
 
         // ===============================================
         // Input matrix tensor constructor.
