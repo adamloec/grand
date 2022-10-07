@@ -9,15 +9,9 @@ using namespace Grand;
 
 __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
 {
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-
-    printf("ROW: %d\n", row);
-    printf("COL: %d\n", col);
-    printf("A: %f B: %f\n", a.tensor[row], b.tensor[row]);
+    int i = threadIdx.x;
+    c.tensor[i] = a.tensor[i] + b.tensor[i];
     
-    if (row < b.width && col < a.height)
-        c.tensor[row] = a.tensor[row] + b.tensor[row];
 }
 
 cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device=0)
@@ -27,9 +21,6 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
     Tensor::Matrix dev_c;
     size_t size;
     cudaError_t cudaStatus;
-
-    dim3 dimBlock(BLOCK_SIZE, BLOCK_SIZE);
-    dim3 dimGrid(b.width / dimBlock.x, a.height / dimBlock.y);
 
     // CUDA device check
     cudaStatus = cudaSetDevice(device);
@@ -66,7 +57,7 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
     cudaMalloc(&dev_c.tensor, size);
 
     // Generate kernel dimensions, invoke kernel
-    addKernel<<<dimGrid, dimBlock>>>(dev_c, dev_a, dev_b);
+    addKernel<<<2, 4>>>(dev_c, dev_a, dev_b);
 
     // Kernel synchronize, checks for kernel errors
     cudaStatus = cudaDeviceSynchronize();
@@ -77,7 +68,7 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
     }
 
     // Read output tensor from memory
-    //cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
+    cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
     if (cudaStatus != cudaSuccess) 
     {
         fprintf(stderr, "ERROR: CUDAMEMCPY: %d\n", cudaStatus);
@@ -110,17 +101,11 @@ int main()
     }
 
     // Output
-    // for (int i = 0; i < c.width*c.height; i++)
-    // {
-    //     cout << "C: " << c.tensor[i];
-    //     cout << endl;
-    // }
-
-    free(c.tensor);
-    free(a.tensor);
-    free(b.tensor);
-
-    cudaDeviceReset();
+    for (int i = 0; i < c.width*c.height; i++)
+    {
+        cout << "C: " << c.tensor[i];
+        cout << endl;
+    }
 
     return 0;
 }
