@@ -7,6 +7,18 @@ using namespace Grand;
 // Thread block size
 #define BLOCK_SIZE 2
 
+// ===============================================
+// NVIDIA COMPUTE CAPABILITY 8.6 SUPPORTED
+// https://en.wikipedia.org/wiki/CUDA
+//
+// MAXIMUMS
+// Threads per tensor core = 256, 16-bit floating point
+// Threads per block = 1024
+// Grids = 128
+// Grid dimensions = (x, y, z)
+//
+// ===============================================
+
 __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
 {
     int i = threadIdx.x;
@@ -57,7 +69,7 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
     cudaMalloc(&dev_c.tensor, size);
 
     // Generate kernel dimensions, invoke kernel
-    addKernel<<<2, 4>>>(dev_c, dev_a, dev_b);
+    addKernel<<<1, 4>>>(dev_c, dev_a, dev_b);
 
     // Kernel synchronize, checks for kernel errors
     cudaStatus = cudaDeviceSynchronize();
