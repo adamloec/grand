@@ -17,6 +17,9 @@ using namespace Grand;
 // Grids = 128
 // Grid dimensions = (x, y, z)
 //
+//
+// EXAMPLE KERNEL CALL
+// kernel<<<1, 255>>>(args); //// <<<BLOCKS, KERNELS PER BLOCK>>>
 // ===============================================
 
 __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
