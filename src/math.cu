@@ -29,6 +29,12 @@ using namespace Grand;
 //
 // ===============================================
 
+// ===============================================
+// Add 2 tensor's kernel function.
+//
+// Tensor::Matrix c = Output tensor
+// Tensor::Matrix a/b = Input tensor's
+// ===============================================
 __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
 {
     int i = blockDim.x * blockIdx.x + threadIdx.x;
@@ -39,6 +45,12 @@ __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
     }
 }
 
+// ===============================================
+// Add 2 tensor's function.
+//
+// Tensor::Matrix c = Output tensor
+// Tensor::Matrix a/b = Input tensor's
+// ===============================================
 cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device=0)
 {
     Tensor::Matrix dev_a;
@@ -65,20 +77,23 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
     // Data size (bytes)
     size = a.width * a.height * sizeof(float);
 
-    // Initialize input tensors and copy to memory
+    // Initialize device tensor's width and height
     dev_a.width = a.width;
     dev_a.height = a.height;
-    cudaMalloc(&dev_a.tensor, size);
-    cudaMemcpy(dev_a.tensor, a.tensor, size, cudaMemcpyHostToDevice);
-
     dev_b.width = b.width;
     dev_b.height = b.height;
-    cudaMalloc(&dev_b.tensor, size);
-    cudaMemcpy(dev_b.tensor, b.tensor, size, cudaMemcpyHostToDevice);
-
-    // Initialize output tensor and copy to memory
     dev_c.width = c.width;
     dev_c.height = c.height;
+    
+    // Device memory allocation for input tensors
+    cudaMalloc(&dev_a.tensor, size);
+    cudaMalloc(&dev_b.tensor, size);
+
+    // Copy input tensor's from host to device memory
+    cudaMemcpy(dev_a.tensor, a.tensor, size, cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_b.tensor, b.tensor, size, cudaMemcpyHostToDevice);
+
+    // Device memory allocation for output tensor
     cudaMalloc(&dev_c.tensor, size);
 
     // Invoke kernel with specified kernel dimensions
@@ -92,7 +107,7 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
         goto Error;
     }
 
-    // Read output tensor from memory
+    // Copy output tensor from device to host memory
     cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
     if (cudaStatus != cudaSuccess) 
     {
@@ -108,6 +123,13 @@ Error:
     return cudaStatus;
 }
 
+
+// ===============================================
+// Test main driver function.
+//
+// TO RUN:
+// nvcc math.cu tensor.cu -o math
+// ===============================================
 int main()
 {
     vector<vector<float>> data{{1, 2}, {3, 4}};
