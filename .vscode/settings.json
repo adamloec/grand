@@ -5,6 +5,7 @@
         "queue": "cpp",
         "random": "cpp",
         "ostream": "cpp",
-        "xiosbase": "cpp"
+        "xiosbase": "cpp",
+        "cmath": "cpp"
     }
 }
