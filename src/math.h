@@ -12,10 +12,13 @@
     #include "tensor.h"
 #endif
 
-// ===============================================
-// Add 2 tensor's function.
-//
-// Tensor::Matrix c = Output tensor
-// Tensor::Matrix a/b = Input tensor's
-// ===============================================
-cudaError_t add(Grand::Tensor::Matrix c, Grand::Tensor::Matrix a, Grand::Tensor::Matrix b, int device);
+namespace Grand
+{
+    // ===============================================
+    // Add 2 tensor's function.
+    //
+    // Tensor::Matrix c = Output tensor
+    // Tensor::Matrix a/b = Input tensor's
+    // ===============================================
+    cudaError_t add(Grand::Tensor::Matrix c, Grand::Tensor::Matrix a, Grand::Tensor::Matrix b, int device);
+}
