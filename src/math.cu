@@ -133,9 +133,9 @@ Error:
 int main()
 {
     vector<vector<float>> data{{1, 2}, {3, 4}};
-    Grand::Tensor::Matrix a(data);
-    Grand::Tensor::Matrix b(data);
-    Grand::Tensor::Matrix c;
+    Tensor::Matrix a(data);
+    Tensor::Matrix b(data);
+    Tensor::Matrix c;
     c.width = a.width;
     c.height = a.height;
 
