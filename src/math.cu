@@ -125,7 +125,7 @@ Error:
 
 
 // ===============================================
-// Test main driver function.
+// Main driver test function.
 //
 // TO RUN:
 // nvcc math.cu tensor.cu -o math
