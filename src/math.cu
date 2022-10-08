@@ -1,5 +1,6 @@
 #ifndef MATH_INCL
 #define MATH_INCL
+    #include <math.h>
     #include "math.h"
 #endif
 using namespace Grand;
@@ -12,21 +13,30 @@ using namespace Grand;
 // https://en.wikipedia.org/wiki/CUDA
 //
 // MAXIMUMS
-// Threads per tensor core = 256, 16-bit floating point
 // Threads per block = 1024
 // Grids = 128
 // Grid dimensions = (x, y, z)
 //
 //
 // EXAMPLE KERNEL CALL
-// kernel<<<1, 255>>>(args); //// <<<BLOCKS, KERNELS PER BLOCK>>>
+// kernel<<<ceil(n/256), 256>>>(args); //// <<<BLOCKS, THREADS PER BLOCK>>> n = flattened size of tensor
+//
+// EXAMPLE ERROR CHECKING
+// if (err != cudaSuccess)
+// { 
+//    printf("%s in %s at line %d\n", cudaGetErrorString(err), __FILE__, __LINE__);
+// }
+//
 // ===============================================
 
 __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
 {
-    int i = threadIdx.x;
-    c.tensor[i] = a.tensor[i] + b.tensor[i];
-    
+    int i = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if (i < a.width*a.height)
+    {
+        c.tensor[i] = a.tensor[i] + b.tensor[i];
+    }
 }
 
 cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device=0)
@@ -52,27 +62,27 @@ cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device
         goto Error;
     }
 
+    // Data size (bytes)
+    size = a.width * a.height * sizeof(float);
+
     // Initialize input tensors and copy to memory
     dev_a.width = a.width;
     dev_a.height = a.height;
-    size = a.width * a.height * sizeof(float);
     cudaMalloc(&dev_a.tensor, size);
     cudaMemcpy(dev_a.tensor, a.tensor, size, cudaMemcpyHostToDevice);
 
     dev_b.width = b.width;
     dev_b.height = b.height;
-    size = b.width * b.height * sizeof(float);
     cudaMalloc(&dev_b.tensor, size);
     cudaMemcpy(dev_b.tensor, b.tensor, size, cudaMemcpyHostToDevice);
 
     // Initialize output tensor and copy to memory
     dev_c.width = c.width;
     dev_c.height = c.height;
-    size = c.width * c.height * sizeof(float);
     cudaMalloc(&dev_c.tensor, size);
 
-    // Generate kernel dimensions, invoke kernel
-    addKernel<<<1, 4>>>(dev_c, dev_a, dev_b);
+    // Invoke kernel with specified kernel dimensions
+    addKernel<<<ceil((a.width*a.height)/256.0), 256>>>(dev_c, dev_a, dev_b);
 
     // Kernel synchronize, checks for kernel errors
     cudaStatus = cudaDeviceSynchronize();
@@ -104,8 +114,8 @@ int main()
     Grand::Tensor::Matrix a(data);
     Grand::Tensor::Matrix b(data);
     Grand::Tensor::Matrix c;
-    c.height = 2;
-    c.width = 2;
+    c.width = a.width;
+    c.height = a.height;
 
     // Add vectors in parallel.
     cudaError_t cudaStatus = add(c, a, b);
