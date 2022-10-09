@@ -33,9 +33,10 @@ namespace Grand
     // Tensor::Matrix c = Output tensor
     // Tensor::Matrix a/b = Input tensor's
     // ===============================================
-    __global__ void addKernel(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b)
+    __global__ void addKernel(Tensor::Array c, Tensor::Array *a, Tensor::Array b)
     {
         int i = blockDim.x * blockIdx.x + threadIdx.x;
+        int j = *a.height;
 
         if (i < a.width*a.height)
         {
@@ -46,14 +47,14 @@ namespace Grand
     // ===============================================
     // Add 2 tensor's function.
     //
-    // Tensor::Matrix c = Output tensor
-    // Tensor::Matrix a/b = Input tensor's
+    // Tensor::Array c = Output tensor
+    // Tensor::Array a/b = Input tensor's
     // ===============================================
-    cudaError_t add(Tensor::Matrix c, Tensor::Matrix a, Tensor::Matrix b, int device=0)
+    cudaError_t add(Tensor::Array c, Tensor::Array a, Tensor::Array b, int device=0)
     {
-        Tensor::Matrix dev_a;
-        Tensor::Matrix dev_b;
-        Tensor::Matrix dev_c;
+        Tensor::Array dev_a;
+        Tensor::Array dev_b;
+        Tensor::Array dev_c;
         size_t size;
         cudaError_t cudaStatus;
 
@@ -128,20 +129,21 @@ namespace Grand
 //
 // TO RUN:
 // nvcc math.cu tensor.cu -o math
+// compute-sanitizer .\math.exe (For debugging)
 // ===============================================
 using namespace Grand;
 int main()
 {
     vector<vector<float>> data{{1, 2}, {3, 4}};
-    Tensor::Matrix a(data);
-    Tensor::Matrix b(data);
-    Tensor::Matrix c;
+    Tensor::Array a(data);
+    Tensor::Zeros b(2, 2);
+    Tensor::Array c;
     c.width = a.width;
     c.height = a.height;
 
     // Add vectors in parallel.
     cudaError_t cudaStatus = add(c, a, b);
-    if (cudaStatus != cudaSuccess) 
+    if (cudaStatus != cudaSuccess)
     {
         fprintf(stderr, "ERROR: Addition failed.\n");
         return 1;

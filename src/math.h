@@ -20,5 +20,5 @@ namespace Grand
     // Tensor::Matrix c = Output tensor
     // Tensor::Matrix a/b = Input tensor's
     // ===============================================
-    cudaError_t add(Grand::Tensor::Matrix c, Grand::Tensor::Matrix a, Grand::Tensor::Matrix b, int device);
+    cudaError_t add(Tensor::Array c, Tensor::Array a, Tensor::Array b, int device);
 }

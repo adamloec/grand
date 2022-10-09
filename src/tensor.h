@@ -16,17 +16,25 @@ namespace Grand
 {
     namespace Tensor
     {
+
+        class Tensor
+        {
+            int width = 0;
+            int height = 0;
+            int depth = 0;
+            float* data;
+        };
         // ===============================================
-        // Tensor object.
+        // Array object.
         //
         // vector<vector<float>> tensor = 2d vector tensor.
         // int width = width of matrix.
         // int height = height of matrix.
         // ===============================================
-        class Matrix
+        class Array
         {
             public:
-                vector<vector<float>> matrix;
+                vector<vector<float>> array;
                 int width = 0;
                 int height = 0;
                 float *tensor;
@@ -34,21 +42,21 @@ namespace Grand
                 // ===============================================
                 // Tensor object constructors.
                 // ===============================================
-                Matrix();
-                Matrix(vector<vector<float>> matrix);
+                Array();
+                Array(vector<vector<float>> arr);
 
                 // ===============================================
                 // Tensor object functions.
                 // ===============================================
                 int setWidth();
                 int setHeight();
-                float* setTensor(vector<vector<float>> mat);
+                float* setTensor(vector<vector<float>> arr);
         };
 
         // ===============================================
-        // Derived tensor object, creates tensor of (w, h) dimensions filled with zeros.
+        // Derived array object, creates tensor of (w, h) dimensions filled with zeros.
         // ===============================================
-        class Zeros : public Matrix
+        class Zeros : public Array
         {
             public:
                 // ===============================================
@@ -66,9 +74,9 @@ namespace Grand
         };
 
         // ===============================================
-        // Derived tensor object, creates tensor of (w, h) dimensions filled with ones.
+        // Derived array object, creates tensor of (w, h) dimensions filled with ones.
         // ===============================================
-        class Ones : public Matrix
+        class Ones : public Array
         {
             public:
                 // ===============================================

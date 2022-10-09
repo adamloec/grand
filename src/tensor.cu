@@ -16,49 +16,52 @@ namespace Grand
         // ===============================================
         // Tensor object.
         //
-        // vector<vector<float>> tensor = 2d vector tensor.
+        // vector<vector<float>> matrix = 2d vector.
         // int width = width of matrix.
         // int height = height of matrix.
+        // float *tensor = tensor used for kernel functions.
         // ===============================================
 
         // ===============================================
         // Default tensor constructor, nothing.
         // ===============================================
-        Matrix::Matrix() = default;
+        Array::Array() = default;
 
         // ===============================================
         // Input matrix tensor constructor.
         //
         // vector<vector<float>> matrix = 2d matrix input.
         // tensor(matrix) = Initializes the value of vector<vector<float>> tensor to matrix input.
+        //
+        // Vector parameter specifically for gathering matrix dimensions for kernel use.
         // ===============================================
-        Matrix::Matrix(vector<vector<float>> matrix) : matrix(matrix)
+        Array::Array(vector<vector<float>> array) : array(array)
         {
             width = setWidth();
             height = setHeight();
-            tensor = setTensor(matrix);
+            tensor = setTensor(array);
         }
 
         // ===============================================
         // Set helper function, sets tensor object width.
         // ===============================================
-        int Matrix::setWidth()
+        int Array::setWidth()
         {
-            return matrix.size();
+            return array.size();
         }
 
         // ===============================================
         // Set helper function, sets tensor object height.
         // ===============================================
-        int Matrix::setHeight()
+        int Array::setHeight()
         {
-            return matrix[0].size();
+            return array[0].size();
         }
 
         // ===============================================
         // 2d Vector -> 2d Array converter function for CUDA kernel methods.
         // ===============================================
-        float* Matrix::setTensor(vector<vector<float>> mat)
+        float* Array::setTensor(vector<vector<float>> mat)
         {
             float *temp = new float[width*height];
             int count = 0;
@@ -74,7 +77,7 @@ namespace Grand
         }
 
         // ===============================================
-        // Derived tensor object, creates tensor of (w, h) dimensions filled with zeros.
+        // Zeros tensor object, creates tensor of (w, h) dimensions filled with zeros.
         // ===============================================
         
         // ===============================================
@@ -91,13 +94,13 @@ namespace Grand
         Zeros::Zeros(int w, int h) 
         {
             width = w; 
-            height = h; 
-            matrix = vector<vector<float>> (width, vector<float> (height, 0.0));
-            tensor = setTensor(matrix);
+            height = h;
+            array = vector<vector<float>> (width, vector<float> (height, 0.0));
+            tensor = setTensor(array);
         }
 
         // ===============================================
-        // Derived tensor object, creates tensor of (w, h) dimensions filled with ones.
+        // Ones tensor object, creates tensor of (w, h) dimensions filled with ones.
         // ===============================================
 
         // ===============================================
@@ -115,8 +118,8 @@ namespace Grand
         {
             width = w; 
             height = h; 
-            matrix = vector<vector<float>> (width, vector<float> (height, 1.0));
-            tensor = setTensor(matrix);
+            array = vector<vector<float>> (width, vector<float> (height, 1.0));
+            tensor = setTensor(array);
         }
     }
 }
