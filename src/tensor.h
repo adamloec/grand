@@ -30,7 +30,6 @@ namespace Grand
         // int depth = depth of tensor.
         // float* data = data of tensor.
         // ===================================================================================================
-
         class Tensor
         {
             public:

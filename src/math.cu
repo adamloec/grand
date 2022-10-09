@@ -129,9 +129,9 @@ namespace Grand
 using namespace Grand;
 int main()
 {
-    vector<vector<float>> data{{1, 2}, {3, 4}};
+    vector<vector<float>> data{{1, 2}, {3, 4}, {5, 6}};
     Tensor::Array a(data);
-    Tensor::Zeros b(a.tensor);
+    Tensor::Array b(data);
     Tensor::Zeros c(a.tensor);
 
     // Add vectors in parallel.

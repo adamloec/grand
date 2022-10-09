@@ -14,7 +14,9 @@ namespace Grand
     namespace Tensor
     {
         // ===================================================================================================
-        // Tensor object.
+        // Tensor object, for kernel use. Instantiated inside of array objects and their derivitives.
+        //
+        // NOTE: This object should not be called outside of Array objects/derivatives.
         //
         // int width = width of tensor.
         // int height = height of tensor.
