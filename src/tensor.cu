@@ -1,8 +1,8 @@
-// ===============================================
+// ===================================================================================================
 // Author: Adam Loeckle
 // Date: 10/3/2022
 // Description: Tensor object source file.
-// ===============================================
+// ===================================================================================================
 
 #ifndef TENSOR_INCL
 #define TENSOR_INCL
@@ -13,112 +13,111 @@ namespace Grand
 {
     namespace Tensor
     {
-        // ===============================================
+        // ===================================================================================================
         // Tensor object.
+        //
+        // int width = width of tensor.
+        // int height = height of tensor.
+        // int depth = depth of tensor.
+        // float* data = data of tensor.
+        // ===================================================================================================
+
+        // Default tensor constructor, nothing.
+        Tensor::Tensor() = default;
+
+        // ===================================================================================================
+        // Array object.
         //
         // vector<vector<float>> matrix = 2d vector.
         // int width = width of matrix.
         // int height = height of matrix.
         // float *tensor = tensor used for kernel functions.
-        // ===============================================
+        // ===================================================================================================
 
-        // ===============================================
-        // Default tensor constructor, nothing.
-        // ===============================================
+        // Default array constructor, nothing.
         Array::Array() = default;
 
-        // ===============================================
         // Input matrix tensor constructor.
         //
         // vector<vector<float>> matrix = 2d matrix input.
         // tensor(matrix) = Initializes the value of vector<vector<float>> tensor to matrix input.
         //
         // Vector parameter specifically for gathering matrix dimensions for kernel use.
-        // ===============================================
         Array::Array(vector<vector<float>> array) : array(array)
         {
-            width = setWidth();
-            height = setHeight();
             tensor = setTensor(array);
         }
 
-        // ===============================================
-        // Set helper function, sets tensor object width.
-        // ===============================================
-        int Array::setWidth()
+        // 2d Vector -> Tensor converter function for CUDA kernel methods.
+        Tensor Array::setTensor(vector<vector<float>> mat)
         {
-            return array.size();
-        }
+            Tensor t;
+            t.width = array.size();
+            t.height = array[0].size();
 
-        // ===============================================
-        // Set helper function, sets tensor object height.
-        // ===============================================
-        int Array::setHeight()
-        {
-            return array[0].size();
-        }
-
-        // ===============================================
-        // 2d Vector -> 2d Array converter function for CUDA kernel methods.
-        // ===============================================
-        float* Array::setTensor(vector<vector<float>> mat)
-        {
-            float *temp = new float[width*height];
+            t.data = new float[t.width*t.height];
             int count = 0;
-            for (int i = 0; i < width; i++)
+            for (int i = 0; i < t.width; i++)
             {
-                for (int j = 0; j < height; j++)
+                for (int j = 0; j < t.height; j++)
                 {
-                    temp[count] = mat[i][j];
+                    t.data[count] = mat[i][j];
                     count++;
                 }
             }
-            return temp;
+
+            return t;
         }
 
-        // ===============================================
-        // Zeros tensor object, creates tensor of (w, h) dimensions filled with zeros.
-        // ===============================================
+        // ===================================================================================================
+        // Zeros array object, creates tensor object of (w, h) dimensions filled with zeros.
+        // ===================================================================================================
         
-        // ===============================================
-        // Default tensor constructor, nothing.
-        // ===============================================
+        // Default zeros array constructor, nothing.
         Zeros::Zeros() = default;
 
-        // ===============================================
-        // Input (width, height) tensor constructor.
+        // Input (width, height) zeros array constructor.
         //
         // int w = Desired width of tensor.
         // int h = Desired height of tensor.
-        // ===============================================
         Zeros::Zeros(int w, int h) 
         {
-            width = w; 
-            height = h;
-            array = vector<vector<float>> (width, vector<float> (height, 0.0));
+            array = vector<vector<float>> (w, vector<float> (h, 0.0));
+            tensor = setTensor(array);
+        }
+        
+        // Input (tensor) zeros array constructor.
+        //
+        // Tensor t = tensor input, copies tensor properties to generate zeros tensor of size (t.width. t.height).
+        Zeros::Zeros(Tensor t)
+        {
+            array = vector<vector<float>> (t.width, vector<float> (t.height, 0.0));
             tensor = setTensor(array);
         }
 
-        // ===============================================
-        // Ones tensor object, creates tensor of (w, h) dimensions filled with ones.
-        // ===============================================
+        // ===================================================================================================
+        // Ones array object, creates tensor of (w, h) dimensions filled with ones.
+        // ===================================================================================================
 
-        // ===============================================
-        // Default tensor constructor, nothing.
-        // ===============================================
+        // Default ones array constructor, nothing.
         Ones::Ones() = default;
 
-        // ===============================================
-        // Input (width, height) tensor constructor.
+        // Input (width, height) ones array constructor.
         //
         // int w = Desired width of tensor.
         // int h = Desired height of tensor.
-        // ===============================================
         Ones::Ones(int w, int h)
         {
-            width = w; 
-            height = h; 
-            array = vector<vector<float>> (width, vector<float> (height, 1.0));
+            array = vector<vector<float>> (w, vector<float> (h, 1.0));
+            tensor = setTensor(array);
+        }
+
+        // Input (tensor) ones array constructor.
+        //
+        // Tensor t = tensor input, copies tensor properties to generate ones tensor of size (t.width. t.height).
+        Ones::Ones(Tensor t)
+        {
+            array = vector<vector<float>> (t.width, vector<float> (t.height, 1.0));
             tensor = setTensor(array);
         }
     }

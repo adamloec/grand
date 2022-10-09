@@ -1,8 +1,8 @@
-// ===============================================
+// ===================================================================================================
 // Author: Adam Loeckle
 // Date: 10/3/2022
 // Description: Tensor object header file.
-// ===============================================
+// ===================================================================================================
 
 #ifndef CORE_INCL
 #define CORE_INCL
@@ -16,81 +16,76 @@ namespace Grand
 {
     namespace Tensor
     {
+        // Row = height (x)
+        // Column = width (y)
+        // Depth = depth (z)
+
+        // ===================================================================================================
+        // Tensor object, for kernel use. Instantiated inside of array objects and their derivitives.
+        //
+        // NOTE: This object should not be called outside of Array objects/derivatives.
+        //
+        // int width = width of tensor.
+        // int height = height of tensor.
+        // int depth = depth of tensor.
+        // float* data = data of tensor.
+        // ===================================================================================================
 
         class Tensor
         {
-            int width = 0;
-            int height = 0;
-            int depth = 0;
-            float* data;
+            public:
+                int width = 0;
+                int height = 0;
+                int depth = 0;
+                float* data;
+            
+            // Tensor object constructor.
+            Tensor();
         };
-        // ===============================================
+
+        // ===================================================================================================
         // Array object.
         //
-        // vector<vector<float>> tensor = 2d vector tensor.
-        // int width = width of matrix.
-        // int height = height of matrix.
-        // ===============================================
+        // vector<vector<float>> array = 2d vector input data.
+        // int width = width of array.
+        // int height = height of array.
+        // ===================================================================================================
         class Array
         {
             public:
                 vector<vector<float>> array;
-                int width = 0;
-                int height = 0;
-                float *tensor;
+                Tensor tensor;
 
-                // ===============================================
-                // Tensor object constructors.
-                // ===============================================
+                // Array object constructors.
                 Array();
                 Array(vector<vector<float>> arr);
 
-                // ===============================================
-                // Tensor object functions.
-                // ===============================================
-                int setWidth();
-                int setHeight();
-                float* setTensor(vector<vector<float>> arr);
+                // Array object functions.
+                Tensor setTensor(vector<vector<float>> arr);
         };
 
-        // ===============================================
+        // ===================================================================================================
         // Derived array object, creates tensor of (w, h) dimensions filled with zeros.
-        // ===============================================
+        // ===================================================================================================
         class Zeros : public Array
         {
             public:
-                // ===============================================
-                // Zero tensor object constructors.
-                // ===============================================
+                // Zero array object constructors.
                 Zeros();
-
-                // ===============================================
-                // Input (width, height) tensor constructor.
-                //
-                // int w = Desired width of tensor.
-                // int h = Desired height of tensor.
-                // ===============================================
                 Zeros(int w, int h);
+                Zeros(Tensor t);
         };
 
-        // ===============================================
+        // ===================================================================================================
         // Derived array object, creates tensor of (w, h) dimensions filled with ones.
-        // ===============================================
+        // ===================================================================================================
         class Ones : public Array
         {
             public:
-                // ===============================================
-                // Default tensor constructor, nothing.
-                // ===============================================
+                // Ones array object constructors.
                 Ones();
-
-                // ===============================================
-                // Input (width, height) tensor constructor.
-                //
-                // int w = Desired width of tensor.
-                // int h = Desired height of tensor.
-                // ===============================================
                 Ones(int w, int h);
+                Ones(Tensor t);
         };
     }
 }

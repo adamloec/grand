@@ -4,7 +4,7 @@
     #include "math.h"
 #endif
 
-// ===============================================
+// ===================================================================================================
 // NVIDIA COMPUTE CAPABILITY 8.6 SUPPORTED
 // https://en.wikipedia.org/wiki/CUDA
 //
@@ -23,38 +23,33 @@
 //    printf("%s in %s at line %d\n", cudaGetErrorString(err), __FILE__, __LINE__);
 // }
 //
-// ===============================================
+// ===================================================================================================
 
 namespace Grand
 {
-    // ===============================================
     // Add 2 tensor's kernel function.
     //
     // Tensor::Matrix c = Output tensor
     // Tensor::Matrix a/b = Input tensor's
-    // ===============================================
-    __global__ void addKernel(Tensor::Array c, Tensor::Array *a, Tensor::Array b)
+    __global__ void addKernel(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b)
     {
         int i = blockDim.x * blockIdx.x + threadIdx.x;
-        int j = *a.height;
 
         if (i < a.width*a.height)
         {
-            c.tensor[i] = a.tensor[i] + b.tensor[i];
+            c.data[i] = a.data[i] + b.data[i];
         }
     }
 
-    // ===============================================
     // Add 2 tensor's function.
     //
     // Tensor::Array c = Output tensor
     // Tensor::Array a/b = Input tensor's
-    // ===============================================
-    cudaError_t add(Tensor::Array c, Tensor::Array a, Tensor::Array b, int device=0)
+    cudaError_t add(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device=0)
     {
-        Tensor::Array dev_a;
-        Tensor::Array dev_b;
-        Tensor::Array dev_c;
+        Tensor::Tensor dev_a;
+        Tensor::Tensor dev_b;
+        Tensor::Tensor dev_c;
         size_t size;
         cudaError_t cudaStatus;
 
@@ -85,15 +80,15 @@ namespace Grand
         dev_c.height = c.height;
         
         // Device memory allocation for input tensors
-        cudaMalloc(&dev_a.tensor, size);
-        cudaMalloc(&dev_b.tensor, size);
+        cudaMalloc(&dev_a.data, size);
+        cudaMalloc(&dev_b.data, size);
 
         // Copy input tensor's from host to device memory
-        cudaMemcpy(dev_a.tensor, a.tensor, size, cudaMemcpyHostToDevice);
-        cudaMemcpy(dev_b.tensor, b.tensor, size, cudaMemcpyHostToDevice);
+        cudaMemcpy(dev_a.data, a.data, size, cudaMemcpyHostToDevice);
+        cudaMemcpy(dev_b.data, b.data, size, cudaMemcpyHostToDevice);
 
         // Device memory allocation for output tensor
-        cudaMalloc(&dev_c.tensor, size);
+        cudaMalloc(&dev_c.data, size);
 
         // Invoke kernel with specified kernel dimensions
         addKernel<<<ceil((a.width*a.height)/256.0), 256>>>(dev_c, dev_a, dev_b);
@@ -107,7 +102,7 @@ namespace Grand
         }
 
         // Copy output tensor from device to host memory
-        cudaStatus = cudaMemcpy(c.tensor, dev_c.tensor, size, cudaMemcpyDeviceToHost);
+        cudaStatus = cudaMemcpy(c.data, dev_c.data, size, cudaMemcpyDeviceToHost);
         if (cudaStatus != cudaSuccess) 
         {
             fprintf(stderr, "ERROR: CUDAMEMCPY: %d\n", cudaStatus);
@@ -115,34 +110,32 @@ namespace Grand
         }
 
     Error:
-        cudaFree(dev_c.tensor);
-        cudaFree(dev_a.tensor);
-        cudaFree(dev_b.tensor);
+        cudaFree(dev_c.data);
+        cudaFree(dev_a.data);
+        cudaFree(dev_b.data);
 
         return cudaStatus;
     }
 }
 
 
-// ===============================================
+// ===================================================================================================
 // Main driver test function.
 //
 // TO RUN:
 // nvcc math.cu tensor.cu -o math
 // compute-sanitizer .\math.exe (For debugging)
-// ===============================================
+// ===================================================================================================
 using namespace Grand;
 int main()
 {
     vector<vector<float>> data{{1, 2}, {3, 4}};
     Tensor::Array a(data);
-    Tensor::Zeros b(2, 2);
-    Tensor::Array c;
-    c.width = a.width;
-    c.height = a.height;
+    Tensor::Zeros b(a.tensor);
+    Tensor::Zeros c(a.tensor);
 
     // Add vectors in parallel.
-    cudaError_t cudaStatus = add(c, a, b);
+    cudaError_t cudaStatus = add(c.tensor, a.tensor, b.tensor);
     if (cudaStatus != cudaSuccess)
     {
         fprintf(stderr, "ERROR: Addition failed.\n");
@@ -150,9 +143,9 @@ int main()
     }
 
     // Output
-    for (int i = 0; i < c.width*c.height; i++)
+    for (int i = 0; i < c.tensor.width*c.tensor.height; i++)
     {
-        cout << "C: " << c.tensor[i];
+        cout << "C: " << c.tensor.data[i];
         cout << endl;
     }
 

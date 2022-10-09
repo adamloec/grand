@@ -14,11 +14,9 @@
 
 namespace Grand
 {
-    // ===============================================
     // Add 2 tensor's function.
     //
     // Tensor::Matrix c = Output tensor
     // Tensor::Matrix a/b = Input tensor's
-    // ===============================================
-    cudaError_t add(Tensor::Array c, Tensor::Array a, Tensor::Array b, int device);
+    cudaError_t add(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device);
 }
