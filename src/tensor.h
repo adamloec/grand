@@ -47,10 +47,6 @@ namespace Grand
 
         // ===============================================
         // Derived tensor object, creates tensor of (w, h) dimensions filled with zeros.
-        //
-        // vector<vector<float>> tensor = 2d vector tensor.
-        // int width = width of matrix.
-        // int height = height of matrix.
         // ===============================================
         class Zeros : public Matrix
         {
@@ -71,10 +67,6 @@ namespace Grand
 
         // ===============================================
         // Derived tensor object, creates tensor of (w, h) dimensions filled with ones.
-        //
-        // vector<vector<float>> tensor = 2d vector tensor.
-        // int width = width of matrix.
-        // int height = height of matrix.
         // ===============================================
         class Ones : public Matrix
         {
