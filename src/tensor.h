@@ -6,6 +6,8 @@
 
 #ifndef CORE_INCL
 #define CORE_INCL
+    #include "cuda_runtime.h"
+    #include "device_launch_parameters.h"
     #include <stdio.h>
     #include <iostream>
     #include <vector>
@@ -16,6 +18,7 @@ namespace Grand
 {
     namespace Tensor
     {
+        // Matrix theory
         // Row = height (x)
         // Column = width (y)
         // Depth = depth (z)
@@ -38,7 +41,7 @@ namespace Grand
                 int depth = 0;
                 float* data;
             
-            // Tensor object constructor.
+            // Default tensor constructor, nothing.
             Tensor();
         };
 
@@ -55,11 +58,22 @@ namespace Grand
                 vector<vector<float>> array;
                 Tensor tensor;
 
-                // Array object constructors.
+                // Default array constructor, nothing.
                 Array();
+
+                // Input matrix tensor constructor.
+                //
+                // vector<vector<float>> matrix = 2d matrix input.
+                // tensor(matrix) = Initializes the value of vector<vector<float>> tensor to matrix input.
+                //
+                // Vector parameter specifically for gathering matrix dimensions for kernel use.
                 Array(vector<vector<float>> arr);
 
-                // Array object functions.
+                // Function to create Tensor object out of Array data for kernel use.
+                //
+                // vector<vector<float>> arr = Array.array data
+                //
+                // Return: Tensor
                 Tensor setTensor(vector<vector<float>> arr);
         };
 
@@ -69,9 +83,18 @@ namespace Grand
         class Zeros : public Array
         {
             public:
-                // Zero array object constructors.
+                // Default zeros array constructor, nothing.
                 Zeros();
+
+                // Input (width, height) zeros array constructor.
+                //
+                // int w = Desired width of tensor.
+                // int h = Desired height of tensor.
                 Zeros(int w, int h);
+
+                // Input (tensor) zeros array constructor.
+                //
+                // Tensor t = tensor input, copies tensor properties to generate zeros tensor of size (t.width. t.height).
                 Zeros(Tensor t);
         };
 
@@ -81,9 +104,18 @@ namespace Grand
         class Ones : public Array
         {
             public:
-                // Ones array object constructors.
+                // Default ones array constructor, nothing.
                 Ones();
+
+                // Input (width, height) ones array constructor.
+                //
+                // int w = Desired width of tensor.
+                // int h = Desired height of tensor.
                 Ones(int w, int h);
+
+                // Input (tensor) ones array constructor.
+                //
+                // Tensor t = tensor input, copies tensor properties to generate ones tensor of size (t.width. t.height).
                 Ones(Tensor t);
         };
     }
