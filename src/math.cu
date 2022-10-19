@@ -41,10 +41,27 @@ namespace Grand
         }
     }
 
+    // Dot product 2 tensor's kernel function.
+    //
+    // m * n matrix
+    // n * k matrix
+    // Tensor::Matrix c = Output tensor
+    // Tensor::Matrix a/b = Input tensor's
+    __global__ void dotKernel(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b)
+    {
+        int i = blockDim.x * blockIdx.x + threadIdx.x;
+        int j = blockDim.y * blockIdx.y + threadIdx.y;
+
+        if (i < a.width*a.height)
+        {
+            c.data[i] = a.data[i] + b.data[i];
+        }
+    }
+
     // Add 2 tensor's function.
     //
     // Tensor::Array c = Output tensor
-    // Tensor::Array a/b = Input tensor's
+    // Tensor::Array a/b = Input tensor's (m * n)
     cudaError_t add(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device=0)
     {
         Tensor::Tensor dev_a;
@@ -116,38 +133,35 @@ namespace Grand
 
         return cudaStatus;
     }
-}
 
-
-// ===================================================================================================
-// Main driver test function.
-//
-// TO RUN:
-// nvcc math.cu tensor.cu -o math
-// compute-sanitizer .\math.exe (For debugging)
-// ===================================================================================================
-using namespace Grand;
-int main()
-{
-    vector<vector<float>> data{{1, 2}, {3, 4}, {5, 6}};
-    Tensor::Array a(data);
-    Tensor::Array b(data);
-    Tensor::Zeros c(a.tensor);
-
-    // Add vectors in parallel.
-    cudaError_t cudaStatus = add(c.tensor, a.tensor, b.tensor);
-    if (cudaStatus != cudaSuccess)
+    // Multiply 2 tensor's function.
+    //
+    // Tensor::Array c = m * k output tensor
+    // Tensor::Array a = m * n input tensor
+    // Tensor::Array b = n * k input tensor
+    cudaError_t dot(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device=0)
     {
-        fprintf(stderr, "ERROR: Addition failed.\n");
-        return 1;
-    }
+        Tensor::Tensor dev_a;
+        Tensor::Tensor dev_b;
+        Tensor::Tensor dev_c;
+        size_t size;
+        cudaError_t cudaStatus;
 
-    // Output
-    for (int i = 0; i < c.tensor.width*c.tensor.height; i++)
-    {
-        cout << "C: " << c.tensor.data[i];
-        cout << endl;
-    }
+        // CUDA device check
+        cudaStatus = cudaSetDevice(device);
+        if (cudaStatus != cudaSuccess) 
+        {
+            fprintf(stderr, "ERROR: Cuda enabled device {Device: %d} not found.\n", device);
+            goto Error;
+        }
 
-    return 0;
+        
+
+    Error:
+        cudaFree(dev_c.data);
+        cudaFree(dev_a.data);
+        cudaFree(dev_b.data);
+
+        return cudaStatus;
+    }
 }

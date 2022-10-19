@@ -11,5 +11,9 @@
 #define TENSOR_INCL
     #include "tensor.h"
 #endif
+#ifndef MATH_INCL
+#define MATH_INCL
+    #include "math.h"
+#endif
 
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/
