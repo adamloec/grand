@@ -13,11 +13,11 @@ int main()
     vector<vector<float>> data{{1, 2}, {3, 4}, {5, 6}};
     Tensor::Array a(data);
     Tensor::Array b(data);
-    Tensor::Zeros c(a.tensor);
+    Tensor::Tensor c;
 
     // Add vectors in parallel.
-    cudaError_t cudaStatus = add(c.tensor, a.tensor, b.tensor, 0);
-    if (cudaStatus != cudaSuccess)
+    c = add(a.tensor, b.tensor, 0);
+    if (c.status != 1)
     {
         fprintf(stderr, "ERROR: Addition failed.\n");
         return 1;

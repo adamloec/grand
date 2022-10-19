@@ -40,6 +40,7 @@ namespace Grand
                 int height = 0;
                 int depth = 0;
                 float* data;
+                int status = 1;
             
             // Default tensor constructor, nothing.
             Tensor();
