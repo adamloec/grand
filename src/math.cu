@@ -121,34 +121,12 @@ namespace Grand
         return cudaStatus;
     }
 
-<<<<<<< HEAD
     // Multiply 2 tensor's function.
     //
     // Tensor::Array c = m * k output tensor
     // Tensor::Array a = m * n input tensor
     // Tensor::Array b = n * k input tensor
     cudaError_t dot(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device=0)
-=======
-
-// ===================================================================================================
-// Main driver test function.
-//
-// TO RUN:
-// nvcc math.cu tensor.cu -o math
-// compute-sanitizer .\math.exe (For debugging)
-// ===================================================================================================
-using namespace Grand;
-int main()
-{
-    vector<vector<float>> data{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
-    Tensor::Array a(data);
-    Tensor::Array b(data);
-    Tensor::Zeros c(a.tensor);
-
-    // Add vectors in parallel.
-    cudaError_t cudaStatus = add(c.tensor, a.tensor, b.tensor);
-    if (cudaStatus != cudaSuccess)
->>>>>>> 249d41548953bdbc930f676b0b14330260921878
     {
         Tensor::Tensor dev_a;
         Tensor::Tensor dev_b;
