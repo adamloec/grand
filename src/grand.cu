@@ -1,6 +1,5 @@
 #include "grand.h"
 
-<<<<<<< HEAD
 // ===================================================================================================
 // Main driver test function.
 //
@@ -31,12 +30,5 @@ int main()
         cout << endl;
     }
 
-=======
-using namespace Grand;
-int main()
-{
-    vector<vector<float>> data{{1, 2, 3}, {3, 4, 5}, {5, 6, 7}};
-    Tensor::Array a(data);
->>>>>>> 249d41548953bdbc930f676b0b14330260921878
     return 0;
 }
