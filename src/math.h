@@ -41,16 +41,18 @@
 
 namespace Grand
 {
+    #define BLOCK_SIZE 16
+
     // Add 2 tensor's function.
     //
     // Tensor::Matrix c = Output tensor
     // Tensor::Matrix a/b = Input tensor's
-    Tensor::Tensor add(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device);
+    Tensor::Tensor add(Tensor::Tensor a, Tensor::Tensor b, int device);
 
     // Multiply 2 tensor's function.
     //
     // Tensor::Array c = m * k output tensor
     // Tensor::Array a = m * n input tensor
     // Tensor::Array b = n * k input tensor
-    Tensor::Tensor dot(Tensor::Tensor c, Tensor::Tensor a, Tensor::Tensor b, int device);
+    Tensor::Tensor dot(Tensor::Tensor a, Tensor::Tensor b, int device);
 }
