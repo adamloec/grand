@@ -26,7 +26,7 @@ namespace Grand
         // ===================================================================================================
         // Tensor object, for kernel use. Instantiated inside of array objects and their derivitives.
         //
-        // NOTE: This object should not be called outside of Array objects/derivatives.
+        // NOTE: This object should only be called as an output.
         //
         // int width = width of tensor.
         // int height = height of tensor.

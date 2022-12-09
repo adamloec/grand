@@ -17,3 +17,11 @@
 #endif
 
 // https://docs.nvidia.com/cuda/cuda-c-programming-guide/
+
+namespace Grand
+{
+    class Dense
+    {
+        public:
+    };
+}

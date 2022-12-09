@@ -16,7 +16,7 @@ namespace Grand
         // ===================================================================================================
         // Tensor object, for kernel use. Instantiated inside of array objects and their derivitives.
         //
-        // NOTE: This object should not be called outside of Array objects/derivatives.
+        // NOTE: NOTE: This object should only be called as an output.
         //
         // int width = width of tensor.
         // int height = height of tensor.
@@ -46,8 +46,8 @@ namespace Grand
         {
             // Create tensor object, set width and height.
             Tensor t;
-            t.width = array.size();
-            t.height = array[0].size();
+            t.width = mat.size();
+            t.height = mat[0].size();
 
             // Iterate through 2d vector, fill tensor 1d array with values from vector.
             t.data = new float[t.width*t.height];
