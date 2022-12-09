@@ -25,11 +25,7 @@ int main()
     Tensor::Tensor c = dot(a.tensor, b.tensor, 0);
 
     // Output
-    for (int i = 0; i < c.width*c.height; i++)
-    {
-        cout << "C: " << c.data[i];
-        cout << endl;
-    }
+    c.print();
 
     return 0;
 }

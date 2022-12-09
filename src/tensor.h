@@ -42,8 +42,11 @@ namespace Grand
                 float* data;
                 int status = 1;
             
-            // Default tensor constructor, nothing.
-            Tensor();
+                // Default tensor constructor, nothing.
+                Tensor();
+
+                // Print tensor data
+                void print();
         };
 
         // ===================================================================================================

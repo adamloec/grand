@@ -26,6 +26,14 @@ namespace Grand
 
         Tensor::Tensor() = default;
 
+        void Tensor::print()
+        {
+            for (int i = 0; i < width*height; i++)
+            {
+                cout << data[i] << endl;
+            }
+        }
+
         // ===================================================================================================
         // Array object.
         //
