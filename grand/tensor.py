@@ -13,7 +13,7 @@ class Tensor:
         for d in dim:
             if not isinstance(d, int):
                 raise TypeError("ERROR: Dimensions must be of type int")
-        t = cls(data=np.zeros(dim), dtype=dtype)
+        t = cls(data=np.zeros(dim, dtype=dtype), dtype=dtype)
         return t
     
     @classmethod
@@ -21,7 +21,7 @@ class Tensor:
         for d in dim:
             if not isinstance(d, int):
                 raise TypeError("ERROR: Dimensions must be of type int")
-        t = cls(data=np.ones(dim), dtype=dtype)
+        t = cls(data=np.ones(dim, dtype=dtype), dtype=dtype)
         return t
     
     @classmethod
@@ -29,7 +29,20 @@ class Tensor:
         for d in dim:
             if not isinstance(d, int):
                 raise TypeError("ERROR: Dimensions must be of type int")
-        t = cls(data=np.random.randn(dim))
+        t = cls(data=np.random.randn(dim, dtpye=dtype), dtype=dtype)
+        return t
+    
+    @classmethod
+    def rand_like(cls, tensor):
+        if not isinstance(tensor, Tensor):
+            raise TypeError("ERROR: Data must be of type Tensor")
+    
+    @classmethod
+    def empty(cls, *dim, dtype=np.float32):
+        for d in dim:
+            if not isinstance(d, int):
+                raise TypeError("ERROR: Dimensions must be of type int")
+        t = cls(data=np.empty(dim, dtype=dtype), dtype=dtype)
         return t
     
     def __add__(self, b):
@@ -52,13 +65,13 @@ class Tensor:
         
     def __matmul__(self, b):
         if isinstance(b, Tensor):
-            assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
+            #assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
             return np.matmul(self.data, b.data)
         else:
             raise TypeError("ERROR: Data B must be of type Tensor, int, float")
         
     def __call__(self):
-        print(self.data)
+        print(self.__str__())
 
     def __str__(self):
         return str(self.data)
