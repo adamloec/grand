@@ -1,25 +1,16 @@
 from grand.tensor import Tensor
 from grand.layers import Layer, Input, Dense
+from grand.nn import Model
 
-t1 = Tensor([1, 2, 3])
-t2 = Tensor([[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]])
-
-inp = Input(2, 3)
-dense = Dense(4)
-
-dense(inp())
-
-class Model:
-    def __init__(self, layers=[]):
-        self.layers = layers
-
-        
-
-    # Compile layers dimensions to match for training, errors if not matching
-    def build(self):
-        pass
+# t1 = Tensor([1, 2, 3])
+# t2 = Tensor([[1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]])
 
 
-    def forward(self):
-        for layer in self.layers:
-            pass
+model = Model([
+    Input(2, 3),
+    Dense(4),
+    Dense(5),
+    Dense(2)
+    ])
+
+model.view()

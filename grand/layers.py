@@ -8,6 +8,9 @@ class Layer:
         self.dtype = dtype
         self.output = Tensor.empty(*dim, dtype=self.dtype)
         self.dim = self.output.dim
+
+        self.weights = None
+        self.biases = None
     
     def __str__(self):
         return f'\n Type: {type(self).__name__} \n Dims: {self.dim} \n {self.data.__str__()}'
@@ -44,11 +47,9 @@ class Dense(Layer):
         
         super().__init__(size, dtype=dtype)
         self.activation = activation
-        self.weights = None
-        self.biases = None 
 
     def build(self, layer):
-        self.weights = Tensor.rand(layer.dim[1], self.dim[0])
+        self.weights = Tensor.rand(layer.dim[-1], self.dim[0])
         self.biases = Tensor.rand(self.dim[0])
 
     # Forward pass for dense layer
