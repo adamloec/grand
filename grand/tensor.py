@@ -25,6 +25,14 @@ class Tensor:
         t = cls(data=np.ones(dim), dtype=dtype)
         return t
     
+    @classmethod
+    def rand(cls, *dim, dtype=np.float32):
+        for d in dim:
+            if not isinstance(d, int):
+                raise TypeError("ERROR: Dimensions must be of type int")
+        t = cls(data=np.random.randn(dim))
+        return t
+    
     def __add__(self, b):
         if isinstance(b, Tensor):
             assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
