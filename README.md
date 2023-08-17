@@ -4,10 +4,6 @@
 
 # Grand
 
-A CUDA driven neural network modeling framework.
+A naive neural network modeling framework. Built to expand my knowledge of neural network structure and design.
 
-# Prerequisites
-
-1. [CUDA 11.7+](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
-2. [GCC/G++ compiler](https://www.mingw-w64.org/downloads/#mingw-builds)
-3. [Visual Studio Code (Optional, repo includes .vs configuration files.)](https://code.visualstudio.com/)
+Created in Python utilizing numpy and cuda.
