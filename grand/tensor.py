@@ -29,13 +29,8 @@ class Tensor:
         for d in dim:
             if not isinstance(d, int):
                 raise TypeError("ERROR: Dimensions must be of type int")
-        t = cls(data=np.random.randn(dim, dtpye=dtype), dtype=dtype)
+        t = cls(data=np.random.uniform(0, 1, dim), dtype=dtype)
         return t
-    
-    @classmethod
-    def rand_like(cls, tensor):
-        if not isinstance(tensor, Tensor):
-            raise TypeError("ERROR: Data must be of type Tensor")
     
     @classmethod
     def empty(cls, *dim, dtype=np.float32):
@@ -47,7 +42,7 @@ class Tensor:
     
     def __add__(self, b):
         if isinstance(b, Tensor):
-            assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
+            #assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
             return Tensor(self.data + b.data)
         elif isinstance(b, (int, float)):
             return Tensor(self.data + b)
@@ -66,7 +61,7 @@ class Tensor:
     def __matmul__(self, b):
         if isinstance(b, Tensor):
             #assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
-            return np.matmul(self.data, b.data)
+            return Tensor(np.matmul(self.data, b.data))
         else:
             raise TypeError("ERROR: Data B must be of type Tensor, int, float")
         

@@ -2,35 +2,41 @@ import numpy as np
 from grand.tensor import Tensor
 from grand.activations import Activation
 
+# Parent Layer object
 class Layer:
     def __init__(self, *dim, dtype=np.float32):
-        self.data = Tensor.empty(*dim, dtype=dtype)
-        self.dim = self.data.dim
-
-    def __call__(self):
-        return self.data
+        self.dtype = dtype
+        self.output = Tensor.empty(*dim, dtype=self.dtype)
+        self.dim = self.output.dim
     
     def __str__(self):
         return f'\n Type: {type(self).__name__} \n Dims: {self.dim} \n {self.data.__str__()}'
 
+# Input layer object
 class Input(Layer):
     def __init__(self, *dim, dtype=np.float32):
         super().__init__(*dim, dtype=dtype)
 
-    def __call__(self, input=None):
-        if input == None:
-            return self.data
-        
+    def __call__(self, input):        
         if not isinstance(input, (Tensor, list, np.ndarray)):
             raise TypeError("ERROR: Data must be of type Tensor, list, np.ndarray")
         if isinstance(input, (list, np.ndarray)):
-            self.data = Tensor(input)
-        
-        # verify input data matches dimensions of instantiated Input layer
-        # Only layer where type conversion will happen from list/np.ndarray -> Tensor
+            self.output = Tensor(input)
 
-        return self.data
+        if self.dim != self.output.dim:
+            raise Exception("ERROR: Input data dimensions do not match input layer")
 
+        return self.output
+    
+    # Forward pass for input layer
+    # NOTE: Will always be a linear activation, no w/b in input layer.
+    def forward(self, input):
+        if not isinstance(input, Tensor):
+            raise TypeError("ERROR: Input must be of type Tensor")
+        self.output = input
+        return self.output
+
+# Dense layer object
 class Dense(Layer):
     def __init__(self, size, *, dtype=np.float32, activation=Activation.ReLU):
         if not isinstance(size, int):
@@ -38,44 +44,20 @@ class Dense(Layer):
         
         super().__init__(size, dtype=dtype)
         self.activation = activation
-        self.weights = None # dim = (input*size)
-        self.biases = None # dim = (size)
+        self.weights = None
+        self.biases = None 
 
-    # Forward pass, initializes random weights and biases on first call, checks for dimensions of input and self.dim
-    def __call__(self, input=None):
-        if input == None:
-            return self.data
-        
+    def build(self, layer):
+        self.weights = Tensor.rand(layer.dim[1], self.dim[0])
+        self.biases = Tensor.rand(self.dim[0])
+
+    # Forward pass for dense layer
+    def forward(self, input):
         if not isinstance(input, Tensor):
             raise TypeError("ERROR: Input must be of type Tensor")
+        if self.weights == None or self.biases == None:
+            raise Exception("ERROR: Weights and biases have not been created")
         
-        print(input.data)
-        if self.weights and self.biases == None:
-            pass
-            #self.weights = Tensor.rand(self.input.dim,)
-
-# class Dense:
-#     def __init__(self, size, dtype=np.float32, activation=Activation.ReLU):
-
-#         self.size = size # Int, size of output neurons
-#         self.activation = activation
-#         self.dtype = dtype
-
-#         self.w = None # Weights
-#         self.b = None # Biases
-#         self.output = None # Activation values a_hat
-
-#     def init_params(self, indim):
-#         self.w = Tensor.rand(indim, self.size)
-#         self.b = Tensor.rand(self.size)
-    
-#     def forward(self, inputs):
-#         # regression, activation function
-#         pass
-
-#         # create weights and biases, random tensor creation dependent on size of dense layer, weights will be of size (X input, Y output) or Dense(input, neuron)
-#         # create forward method that calculates logistic regression (z = wx + b), z is output dependent on number of neurons. Ex: Dense(2 input, 3 neuron)
-#         # apply activation function on output values, all values equal to neuron #
-#         # create backward method that calculates gradient
-
-#         # Making assumption, at the moment, that all models will be sequential
+        self.output = input @ self.weights + self.biases
+        # Apply activation function before returning output
+        return self.output
