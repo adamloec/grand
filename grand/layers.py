@@ -4,11 +4,11 @@ from grand.activations import Activation
 
 class Layer:
     def __init__(self, *dim, dtype=np.float32):
-        self.data = Tensor.zeros(*dim, dtype=dtype)
+        self.data = Tensor.empty(*dim, dtype=dtype)
         self.dim = self.data.dim
 
     def __call__(self):
-        print(self.__str__())
+        return self.data
     
     def __str__(self):
         return f'\n Type: {type(self).__name__} \n Dims: {self.dim} \n {self.data.__str__()}'
@@ -17,15 +17,19 @@ class Input(Layer):
     def __init__(self, *dim, dtype=np.float32):
         super().__init__(*dim, dtype=dtype)
 
-    # Should be __call__ (Forward) method, should verify input data matches dimensions of Input layer
-    # Only layer where type conversion will happen from list/np.ndarray -> Tensor
-    def forward(self, input):
+    def __call__(self, input=None):
+        if input == None:
+            return self.data
+        
         if not isinstance(input, (Tensor, list, np.ndarray)):
             raise TypeError("ERROR: Data must be of type Tensor, list, np.ndarray")
         if isinstance(input, (list, np.ndarray)):
-            input = Tensor(input)
+            self.data = Tensor(input)
         
-        return input
+        # verify input data matches dimensions of instantiated Input layer
+        # Only layer where type conversion will happen from list/np.ndarray -> Tensor
+
+        return self.data
 
 class Dense(Layer):
     def __init__(self, size, *, dtype=np.float32, activation=Activation.ReLU):
@@ -40,14 +44,15 @@ class Dense(Layer):
     # Forward pass, initializes random weights and biases on first call, checks for dimensions of input and self.dim
     def __call__(self, input=None):
         if input == None:
-            super(Dense, self).__call__()
-            return
+            return self.data
+        
         if not isinstance(input, Tensor):
             raise TypeError("ERROR: Input must be of type Tensor")
         
+        print(input.data)
         if self.weights and self.biases == None:
-            self.weights = Tensor.rand()
-        print(input)
+            pass
+            #self.weights = Tensor.rand(self.input.dim,)
 
 # class Dense:
 #     def __init__(self, size, dtype=np.float32, activation=Activation.ReLU):
