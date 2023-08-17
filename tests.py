@@ -1,4 +1,4 @@
-from tensor import Tensor
+from grand.tensor import Tensor
 
 t1 = Tensor([1, 2, 3])
 t2 = Tensor([1, 2, 3])

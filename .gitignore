@@ -2,3 +2,4 @@
 *.exp
 *.lib
 *.vscode
+grand/__pycache__/
