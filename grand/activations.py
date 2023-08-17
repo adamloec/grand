@@ -10,4 +10,4 @@ class Activation:
     def sigmoid(x):
         if not isinstance(x, (int, float)):
             raise TypeError("ERROR: Data B must be of type int, float")
-        return 1/(1-np.exp(-x))
+        return 1/(1+np.exp(-x))
