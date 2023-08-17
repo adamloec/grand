@@ -2,10 +2,9 @@ import numpy as np
 
 class Tensor:
     def __init__(self, data, dtype=np.float32):
-        if not isinstance(data, np.ndarray):
-            if not isinstance(data, list):
-                raise TypeError("ERROR: Data must be of type list OR np.ndarray")
-            data = np.array(data, dtype=dtype)
+        if not isinstance(data, (np.ndarray, list)):
+            raise TypeError("ERROR: Data must be of type list, np.ndarray")
+        data = np.array(data, dtype=dtype)
         self.data = data
         self.dim = data.shape
 
