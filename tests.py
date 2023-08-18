@@ -14,11 +14,6 @@ from grand.nn import Model
 
 #model.forward()
 
-import nnfs
-from nnfs.datasets import spiral_data
-
-nnfs.init()
-
-X, y = spiral_data(samples=100, classes=3)
-
-print(X.shape)
+# Input(batch_size (number of data points), data size)
+# Dense(data size, output size)
+# etc...
