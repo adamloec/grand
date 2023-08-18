@@ -50,7 +50,7 @@ class Dense(Layer):
 
     def build(self, layer):
         self.weights = Tensor.rand(layer.dim[-1], self.dim[0])
-        self.biases = Tensor.rand(self.dim[0])
+        self.biases = Tensor.rand(1, self.dim[0])
 
     # Forward pass for dense layer
     def forward(self, input):
@@ -59,5 +59,14 @@ class Dense(Layer):
         if self.weights == None or self.biases == None:
             raise Exception("ERROR: Weights and biases have not been created")
         
-        self.output = input @ self.weights + self.biases
+        print("INPUT: \n", input, input.dim)
+        print("WEIGHTS: \n", self.weights, self.weights.dim)
+        print("BIASES: \n", self.biases, self.biases.dim)
+        print("OUTPUT: \n", self.output, self.output.dim)
+
+        self.output = (input @ self.weights) + self.biases
+        
+        print("WEIGHTS: \n", self.weights, self.weights.dim)
+        print("BIASES: \n", self.biases, self.biases.dim)
+        print("OUTPUT: \n", self.output, self.output.dim)
         return self.activation(self.output)

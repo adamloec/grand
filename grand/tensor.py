@@ -42,7 +42,6 @@ class Tensor:
     
     def __add__(self, b):
         if isinstance(b, Tensor):
-            #assert self.dim == b.dim, "ERROR: A and B input Tensors must be the same size"
             return Tensor(self.data + b.data)
         elif isinstance(b, (int, float)):
             return Tensor(self.data + b)
