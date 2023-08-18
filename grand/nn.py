@@ -15,5 +15,6 @@ class Model:
             print("Biases:\n", layer.biases)
 
     def forward(self):
-        for layer in self.layers:
-            pass
+        for i, layer in enumerate(self.layers):
+            if not isinstance(layer, Input):
+                layer.forward(self.layers[i-1].output)

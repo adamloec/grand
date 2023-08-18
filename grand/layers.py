@@ -60,5 +60,4 @@ class Dense(Layer):
             raise Exception("ERROR: Weights and biases have not been created")
         
         self.output = input @ self.weights + self.biases
-        # Apply activation function before returning output
-        return self.output
+        return self.activation(self.output)

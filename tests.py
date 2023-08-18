@@ -13,4 +13,4 @@ model = Model([
     Dense(2)
     ])
 
-model.view()
+model.forward()
