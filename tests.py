@@ -30,13 +30,14 @@ mnist = keras.datasets.mnist
 print("Training initial shape: ", train_images.shape)
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Dense(512, activation='relu', input_shape=(28, 28, 1)),
+    tf.keras.layers.Dense(5, activation='relu', input_shape=(100, 5)),
     tf.keras.layers.Dense(10)
 ])
 
 model.compile(optimizer='adam', 
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
 
+model.build()
 model.summary()
 
 # history = model.fit(train_images, train_labels, epochs=5)
