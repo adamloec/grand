@@ -210,3 +210,7 @@ class Tensor:
         """
 
         return str(self.data)
+    
+    def reshape(self, *shape):
+        reshaped = self.data.reshape(shape)
+        return Tensor(reshaped, self.dtype)

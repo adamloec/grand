@@ -3,7 +3,7 @@ import random
 import time
 
 from grand.tensor import Tensor
-from grand.layers import Dense
+from grand.layers import Layer, Dense, Flatten
 
 class Colors:
     FAIL = '\033[91m'
@@ -122,6 +122,8 @@ def tensor_scalar_mul(**kwargs):
 
 # test_images = test_images / 255.0
 
+# print(train_images.shape)
+
 # model = tf.keras.Sequential([
 #     tf.keras.layers.Flatten(input_shape=(28, 28)),
 #     tf.keras.layers.Dense(128, activation='relu'),
@@ -130,19 +132,15 @@ def tensor_scalar_mul(**kwargs):
 
 # model.compile(optimizer='adam',
 #               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
-
-# #model.summary()
+# model.build()
+# model.summary()
 
 # model.fit(train_images, train_labels, epochs=10)
 
-# d1 = Dense(5)
-# d2 = Dense(3)
+l1 = Flatten(input_shape=(28, 28))
+l2 = Dense(128)
+l3 = Dense(10)
 
-# d2._build(d1)
-
-test1 = np.ones((2, 4))
-
-test2 = np.ones((4, 3))
-
-test3 = test1 @ test2
-print(test3.shape)
+l2._build(l1.shape)
+print(l2.shape)
+l3._build(l2.shape)
