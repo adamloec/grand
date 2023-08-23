@@ -3,8 +3,7 @@ import random
 import time
 
 from grand.tensor import Tensor
-from grand.layers import Layer, Input, Dense
-from grand.nn import Model
+from grand.layers import Dense
 
 class Colors:
     FAIL = '\033[91m'
@@ -34,9 +33,9 @@ class Testbench:
 
             if not func(dim1=dim1, dim2=dim2, np1=np1, np2=np2):
                 print(f"TEST {func.__name__} {run}/{runs} {Colors.FAIL}FAIL{Colors.ENDC}")
-
-            if run % 100 == 0:
-                print(f"TEST {func.__name__} Runs: {run}/{runs} {Colors.OKGREEN}PASS{Colors.ENDC}")
+            else:
+                if run % 100 == 0:
+                    print(f"TEST {func.__name__} Runs: {run}/{runs} {Colors.OKGREEN}PASS{Colors.ENDC}")
         toc = time.perf_counter()
         
         print(f"TEST {func.__name__} Runs: {runs}/{runs} {Colors.OKGREEN}PASS{Colors.ENDC}") 
@@ -112,4 +111,38 @@ def tensor_scalar_mul(**kwargs):
     np_result = np.around(kwargs['np1'] * kwargs['dim1'], decimals=4)
     return (tensor_result == np_result).all()
 
-Testbench(tensor_tensor_add)
+#Testbench(tensor_tensor_add)
+
+# import tensorflow as tf
+# fashion_mnist = tf.keras.datasets.fashion_mnist
+
+# (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+
+# train_images = train_images / 255.0
+
+# test_images = test_images / 255.0
+
+# model = tf.keras.Sequential([
+#     tf.keras.layers.Flatten(input_shape=(28, 28)),
+#     tf.keras.layers.Dense(128, activation='relu'),
+#     tf.keras.layers.Dense(10)
+# ])
+
+# model.compile(optimizer='adam',
+#               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True))
+
+# #model.summary()
+
+# model.fit(train_images, train_labels, epochs=10)
+
+# d1 = Dense(5)
+# d2 = Dense(3)
+
+# d2._build(d1)
+
+test1 = np.ones((2, 4))
+
+test2 = np.ones((4, 3))
+
+test3 = test1 @ test2
+print(test3.shape)
