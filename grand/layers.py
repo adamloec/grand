@@ -2,6 +2,8 @@ import numpy as np
 from grand.tensor import Tensor
 from grand.activations import Activation
 
+from grand.utils import Colors
+
 class Layer:
     def __init__(self, units=0, *, input_shape=0, dtype=np.float32, activation=Activation.Linear):
         if input_shape != 0:
@@ -18,6 +20,8 @@ class Layer:
         self.biases = None
         self.output = None
 
+        self._has_built = False
+
     def _build(self, prev_shape, is_start=False):
         if is_start:
             return
@@ -26,6 +30,16 @@ class Layer:
                 raise TypeError("ERROR: input_shape must be of type tuple")
         self.weights = Tensor.rand(prev_shape[-1], self.shape[-1])
         self.biases = Tensor.rand(1, self.shape[-1])
+        self._has_built = True
+
+    def view(self):
+        if self._has_built:
+            print("\n--------------------------------------------------------")
+            print(f"{Colors.HEADER}{Colors.UNDERLINE}Layer View{Colors.ENDC}\n")
+            print(f"{Colors.OKGREEN}Weights: {Colors.ENDC}Shape: {self.weights.shape}\n")
+            print(f"{Colors.OKGREEN}Biases: {Colors.ENDC}Shape: {self.biases.shape}\n")
+        else:
+            print("ERROR: Model must be built to view weights/biases sizing.")
 
 class Dense(Layer):
     def __init__(self, units, *, input_shape=0, dtype=np.float32, activation=Activation.Linear):
