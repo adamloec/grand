@@ -4,11 +4,10 @@ import time
 
 from grand.tensor import Tensor
 from grand.layers import Layer, Dense, Flatten
+from grand.nn import Model
+from grand.activations import Activation
 
-class Colors:
-    FAIL = '\033[91m'
-    OKGREEN = '\033[92m'
-    ENDC = '\033[0m'
+from grand.utils import Colors
 
 class Testbench:
     """
@@ -111,8 +110,6 @@ def tensor_scalar_mul(**kwargs):
     np_result = np.around(kwargs['np1'] * kwargs['dim1'], decimals=4)
     return (tensor_result == np_result).all()
 
-#Testbench(tensor_tensor_add)
-
 # import tensorflow as tf
 # fashion_mnist = tf.keras.datasets.fashion_mnist
 
@@ -121,8 +118,6 @@ def tensor_scalar_mul(**kwargs):
 # train_images = train_images / 255.0
 
 # test_images = test_images / 255.0
-
-# print(train_images.shape)
 
 # model = tf.keras.Sequential([
 #     tf.keras.layers.Flatten(input_shape=(28, 28)),
@@ -137,10 +132,10 @@ def tensor_scalar_mul(**kwargs):
 
 # model.fit(train_images, train_labels, epochs=10)
 
-l1 = Flatten(input_shape=(28, 28))
-l2 = Dense(128)
-l3 = Dense(10)
+model = Model([
+    Flatten(input_shape=(28, 28)),
+    Dense(128, activation=Activation.ReLU),
+    Dense(10)
+])
 
-l2._build(l1.shape)
-print(l2.shape)
-l3._build(l2.shape)
+model.view()

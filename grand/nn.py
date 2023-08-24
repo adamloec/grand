@@ -1,24 +1,34 @@
 from grand.tensor import Tensor
 from grand.layers import Layer
 
-# class Model:
-#     def __init__(self, layers=[]):
-#         self.layers = layers
-#         if not isinstance(layers[0], Input):
-#             raise TypeError("ERROR: Layer 0 must be of type Layer.Input")
+from grand.utils import Colors
 
-#         for i, layer in enumerate(self.layers):
-#             if not isinstance(layer, Input):
-#                 layer.build(self.layers[i-1])
+class Model:
+    def __init__(self, layers=[]):
+        self.layers = layers
+        for layer in layers:
+            if not isinstance(layer, Layer):
+                raise TypeError("ERROR: Model inputs must all be layers")
 
-#     def view(self):
-#         for i, layer in enumerate(self.layers):
-#             print(f"Layer: {i}, Type: {type(layer)}")
-#             print("Weights:\n", layer.weights, "\n")
-#             print("Biases:\n", layer.biases, "\n")
-#             print("Output:\n", layer.output, "\n")
+        layers[0]._build(0, is_start=True)
+        for i in range(1, len(layers)):
+            layers[i]._build(layers[i-1].shape)
 
-#     def forward(self):
-#         for i, layer in enumerate(self.layers):
-#             if not isinstance(layer, Input):
-#                 layer.forward(self.layers[i-1].output)
+        self.loss = None
+        self.optimizer = None
+
+    def train(self, data, data_labels, batch_size=32, epochs=10):
+        # Perform batching on both data/data_labels
+        # Loop total number of epochs
+        # Compare output to data_labels
+        def __forward(data, data_labels):
+            pass
+        pass
+    
+
+    def view(self):
+        print("\n--------------------------------------------------------")
+        print(f"{Colors.HEADER}{Colors.UNDERLINE}Model View{Colors.ENDC}\n")
+        for i, layer in enumerate(self.layers):
+            print(f"{Colors.OKGREEN}Layer: {Colors.ENDC}{i}, Type: '{type(layer).__name__}', Shape: {layer.shape}, Activation: {layer.activation.__name__}\n")
+        print("--------------------------------------------------------\n")
