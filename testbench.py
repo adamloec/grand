@@ -138,4 +138,5 @@ model = Model([
     Dense(10)
 ])
 
+model.compile(loss="Loss", optimizer="Optimizer")
 model.view()

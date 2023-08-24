@@ -6,16 +6,20 @@ from grand.utils import Colors
 class Model:
     def __init__(self, layers=[]):
         self.layers = layers
-        for layer in layers:
+        for layer in self.layers:
             if not isinstance(layer, Layer):
                 raise TypeError("ERROR: Model inputs must all be layers")
 
-        layers[0]._build(0, is_start=True)
-        for i in range(1, len(layers)):
-            layers[i]._build(layers[i-1].shape)
-
         self.loss = None
         self.optimizer = None
+
+    def compile(self, loss, optimizer):
+        self.layers[0]._build(0, is_input=True)
+        for i in range(1, len(self.layers)):
+            self.layers[i]._build(self.layers[i-1].shape)
+
+        self.loss = loss
+        self.optimizer = optimizer
 
     def train(self, data, data_labels, batch_size=32, epochs=10):
         # Perform batching on both data/data_labels
