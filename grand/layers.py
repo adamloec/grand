@@ -56,7 +56,7 @@ class Dense(Layer):
         self.output = (data @ self.weights) + self.biases
         return self.activation(self.output)
 
-# Will always be input layer, flattens shape of input data
+# Will always be a 'filler' layer, will not perform forward/backprop func
 class Flatten(Layer):
     def __init__(self, input_shape=0, dtype=np.float32):
         if not isinstance(input_shape, tuple):
