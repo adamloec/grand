@@ -14,7 +14,7 @@ class Model:
         self.optimizer = None
 
     def compile(self, loss, optimizer):
-        self.layers[0]._build(0, is_input=True)
+        self.layers[0]._build(is_input=True)
         for i in range(1, len(self.layers)):
             self.layers[i]._build(self.layers[i-1].shape)
 

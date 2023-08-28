@@ -23,7 +23,7 @@ class Layer:
         self._is_input = False
         self._has_built = False
 
-    def _build(self, prev_shape, is_input=False):
+    def _build(self, prev_shape=(0,), is_input=False):
         if is_input:
             self._is_input = True
             return
