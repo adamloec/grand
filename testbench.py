@@ -31,11 +31,12 @@ from grand.utils import Colors
 
 # model.fit(train_images, train_labels, epochs=10)
 
-model = Model([
-    Flatten(input_shape=(28, 28)),
-    Dense(128, activation=Activation.ReLU),
-    Dense(10)
-])
+# model = Model([
+#     Flatten(input_shape=(28, 28)),
+#     Dense(128, activation=Activation.ReLU),
+#     Dense(10)
+# ])
 
-model.compile(loss="Loss", optimizer="Optimizer")
-model.view()
+# model.compile(loss="Loss", optimizer="Optimizer")
+# model.view()
+
