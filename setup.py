@@ -53,6 +53,7 @@ setup(
     url="https://github.com/adamloec/grand",
     description="Definitely a tensor framework.",
     long_description="",
+    packages=["grand"],
     ext_modules=ext_modules,
     extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
