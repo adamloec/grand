@@ -1,5 +1,6 @@
-from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
+from pybind11.setup_helpers import Pybind11Extension, build_ext
+
 import subprocess, os
 import re
 import platform
@@ -30,11 +31,11 @@ def get_cuda():
         raise EnvironmentError(f"Error while checking CUDA installation: {e}")
 
 cuda_version = get_cuda()
-
 if platform.system() == "Windows":
     cuda_include_dir = f"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v{cuda_version}/include"
 else:
     cuda_include_dir = f"/usr/local/cuda-{cuda_version}/include"
+
 
 ext_modules = [
     Pybind11Extension(
@@ -57,9 +58,11 @@ setup(
     ext_modules=ext_modules,
     extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
+    setup_requires=[
+        "pybind11",
+    ],
     install_requires=[
         "numpy>=1.18.0",
-        "pybind11",
     ],
     zip_safe=False,
     python_requires=">=3.7",
