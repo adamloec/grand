@@ -6,24 +6,24 @@
 #
 
 import numpy as np
+from grand.device import Device
 
 class Tensor:
     """
     Name: Tensor()
     Purpose: Parent constructor for the Tensor object.
-    Parameters: data (list, np.ndarray), dtype (Any), device (0: CPU, 1: GPU)
+    Parameters: data (list, np.ndarray), dtype (Any)
     Return: None
 
     Uses: \n
     t = Tensor([1, 2, 3])
     t = Tensor(np.array([1, 2, 3]))
     """
-    def __init__(self, data, dtype=np.float32, device=0):
+    def __init__(self, data, dtype=np.float32, device='cpu'):
 
         if not isinstance(data, (np.ndarray, list)):
             raise TypeError("ERROR: Data must be of type list, np.ndarray")
-        data = np.array(data, dtype=dtype)
-        self.data = data
+        self.data = np.array(data, dtype=dtype)
         self.shape = self.data.shape
         self.dtype = dtype
 
