@@ -2,4 +2,7 @@
 *.exp
 *.lib
 *.vscode
+
 grand/__pycache__/
+grand.egg-info
+build

@@ -6,7 +6,6 @@
 #
 
 import numpy as np
-from grand.device import Device
 
 class Tensor:
     """
@@ -19,7 +18,7 @@ class Tensor:
     t = Tensor([1, 2, 3])
     t = Tensor(np.array([1, 2, 3]))
     """
-    def __init__(self, data, dtype=np.float32, device='cpu'):
+    def __init__(self, data, dtype=np.float32, device='gpu'):
 
         if not isinstance(data, (np.ndarray, list)):
             raise TypeError("ERROR: Data must be of type list, np.ndarray")
