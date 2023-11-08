@@ -14,7 +14,7 @@ def get_cuda():
         result = subprocess.run(["nvcc", "--version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         # Check if nvcc was found
         if result.returncode != 0:
-            raise EnvironmentError("CUDA is not installed on your system. Please install CUDA v11.*.")
+            raise EnvironmentError("CUDA is not installed on your system. CUDA version 11.* or 12.* required.")
 
         # Parse the version information to get the CUDA version
         version_info = result.stdout
@@ -23,10 +23,11 @@ def get_cuda():
             cuda_version = match.group(1)
         else:
             raise EnvironmentError("Failed to extract CUDA version from nvcc output.")
-
         if float(cuda_version) <= 11.0:
             raise EnvironmentError("CUDA version 11.* or 12.* required. Please upgrade your current CUDA installation.")
+        
         return cuda_version
+    
     except Exception as e:
         raise EnvironmentError(f"Error while checking CUDA installation: {e}")
 
