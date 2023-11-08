@@ -40,6 +40,4 @@ from grand.utils import Colors
 # model.compile(loss="Loss", optimizer="Optimizer")
 # model.view()
 
-from grand import gcuda
-
-print(gcuda.add(1, 2))
+from grand.device import Device

@@ -2,6 +2,7 @@
 *.exp
 *.lib
 *.vscode
+*.pyd
 
 grand/__pycache__/
 grand.egg-info

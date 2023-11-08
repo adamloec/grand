@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 import subprocess, os
@@ -34,16 +34,19 @@ def get_cuda():
 cuda_version = get_cuda()
 if platform.system() == "Windows":
     cuda_include_dir = f"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v{cuda_version}/include"
+    cuda_lib_dir = f"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v{cuda_version}/lib/x64"
 else:
     cuda_include_dir = f"/usr/local/cuda-{cuda_version}/include"
+    cuda_lib_dir = f"/usr/local/cuda-{cuda_version}/lib/x64"
 
 
 ext_modules = [
     Pybind11Extension(
-        "grand.gcuda",
-        ["gcuda/ops.cpp"],
-        define_macros=[("VERSION_INFO", __version__)],
-        include_dirs=[cuda_include_dir]
+        "grand._gcuda",
+        ["grand/gcuda/bindings.cpp"],
+        include_dirs=[cuda_include_dir],
+        library_dirs=[cuda_lib_dir],
+        libraries=['cudart'],
     ),
 ]
 
@@ -57,8 +60,8 @@ setup(
     long_description="",
     packages=["grand"],
     ext_modules=ext_modules,
-    extras_require={"test": "pytest"},
     cmdclass={"build_ext": build_ext},
+    extras_require={"test": "pytest"},
     setup_requires=[
         "pybind11",
     ],
