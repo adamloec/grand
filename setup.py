@@ -1,3 +1,4 @@
+from glob import glob
 from setuptools import setup, find_packages
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
@@ -43,11 +44,10 @@ else:
 ext_modules = [
     Pybind11Extension(
         "grand._gcuda",
-        ["grand/gcuda/bindings.cpp",
-         "grand/gcuda/src/utils.cpp"],
+        sorted(glob("grand/gcuda/**/*.cpp", recursive=True)),
         include_dirs=[cuda_include_dir],
         library_dirs=[cuda_lib_dir],
-        libraries=['cudart'],
+        libraries=['cuda', 'cudart', 'nvrtc'],
     ),
 ]
 
@@ -60,8 +60,8 @@ setup(
     description="Definitely a tensor framework.",
     long_description="",
     packages=["grand"],
-    ext_modules=ext_modules,
     cmdclass={"build_ext": build_ext},
+    ext_modules=ext_modules,
     extras_require={"test": "pytest"},
     setup_requires=[
         "pybind11",

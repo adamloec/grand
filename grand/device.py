@@ -1,6 +1,6 @@
 from . import _gcuda
 
-print(_gcuda.cudaDeviceExists(0))
+print(_gcuda.CudaUtils.cudaDeviceExists(0))
 
 class Device:
     def __init__(self, device_type):

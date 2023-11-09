@@ -1,4 +1,10 @@
-#include "bindings.h"
+#include <pybind11/pybind11.h>
+#include <stdexcept>
+#include <string>
+#include <cuda_runtime.h>
+
+// #include "src/cuda_error.h"
+#include "src/utils.h"
 
 namespace py = pybind11;
 
@@ -15,23 +21,7 @@ PYBIND11_MODULE(_gcuda, m)
 
     )pbdoc";
 
-    py::register_exception<CudaError>(m, "CudaError");
-    
-    m.def("cudaDeviceExists", &cudaDeviceExists, R"pbdoc(
-        Checks if a specific CUDA-enabled device exists based on the given device ID.
-
-        Parameters:
-            device_id (int): The ID of the device to check.
-
-        Returns:
-            bool: True if the device exists, False otherwise.
-
-        Throws:
-            CudaError: If there is an error in retrieving device information.
-
-        Examples:
-            >>> from . import _gcuda 
-            >>> _gcuda.cudaDeviceExists(0) # Checks if the first CUDA device is available
-            True
-    )pbdoc");
+    // py::register_exception<CudaError>(m, "CudaError");
+    py::class_<CudaUtils>(m, "CudaUtils")
+        .def_static("cudaDeviceExists", &CudaUtils::cudaDeviceExists);
 }
