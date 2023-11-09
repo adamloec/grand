@@ -15,7 +15,7 @@ PYBIND11_MODULE(_gcuda, m)
 
     )pbdoc";
 
-    // py::register_exception<CudaError>(m, "CudaError");
+    py::register_exception<CudaError>(m, "CudaError");
     
     m.def("cudaDeviceExists", &cudaDeviceExists, R"pbdoc(
         Checks if a specific CUDA-enabled device exists based on the given device ID.
