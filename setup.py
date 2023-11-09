@@ -43,7 +43,8 @@ else:
 ext_modules = [
     Pybind11Extension(
         "grand._gcuda",
-        ["grand/gcuda/bindings.cpp"],
+        ["grand/gcuda/bindings.cpp",
+         "grand/gcuda/src/utils.cpp"],
         include_dirs=[cuda_include_dir],
         library_dirs=[cuda_lib_dir],
         libraries=['cudart'],
