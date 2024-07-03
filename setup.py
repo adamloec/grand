@@ -2,25 +2,34 @@ from glob import glob
 from setuptools import setup, find_packages
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 
-import subprocess, os
+import subprocess
+import os, sys
 import re
 import platform
 
 __version__ = "0.0.1"
 
-sdk_path = subprocess.check_output(["xcrun", "--show-sdk-path"]).decode().strip()
+if platform.system() == "Darwin":
+    try:
+        include_dirs = [subprocess.check_output(["xcrun", "--show-sdk-paths"], stderr=subprocess.STDOUT).decode().strip() + "/System/Library/Frameworks/Metal.framework/Headers"]
 
+        ext_modules = [
+            Pybind11Extension(
+                "grand._gmetal",
+                sorted(glob("grand/gmetal/**/*.cpp", recursive=True)),
+                include_dirs=include_dirs,
+                extra_link_args=["Metal"],
+            ),
+        ]
+    except Exception as e:
+        print(f"ERROR: Grand requires Xcode command line tools to be installed. \n")
+        sys.exit(1)
 
-ext_modules = [
-    Pybind11Extension(
-        "grand._gmetal",
-        sorted(glob("grand/gmetal/**/*.cpp", recursive=True)),
-        include_dirs=[f"{sdk_path}/System/Library/Frameworks/Metal.framework/Headers"],
-        extra_compile_args=["-fobjc-arc", "-x", "objective-c++"],
-        extra_link_args=["-framework", "Metal"],
-        libraries=[],
-    ),
-]
+if platform.system() == "win32":
+    pass
+
+if platform.system() == "Linux":
+    pass
 
 setup(
     name="grand",
