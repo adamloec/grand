@@ -11,8 +11,10 @@ __version__ = "0.0.1"
 
 if platform.system() == "Darwin":
     try:
-        include_dirs = [subprocess.check_output(["xcrun", "--show-sdk-paths"], stderr=subprocess.STDOUT).decode().strip() + "/System/Library/Frameworks/Metal.framework/Headers"]
-
+        include_dirs = [subprocess.check_output(["xcrun", "--show-sdk-path"], stderr=subprocess.STDOUT).decode().strip() + "/System/Library/Frameworks/Metal.framework/Headers"]
+        if not os.path.exists(include_dirs[0]):
+            raise Exception()
+        
         ext_modules = [
             Pybind11Extension(
                 "grand._gmetal",
@@ -22,7 +24,7 @@ if platform.system() == "Darwin":
             ),
         ]
     except Exception as e:
-        print(f"ERROR: Grand requires Xcode command line tools to be installed. \n")
+        print(f"ERROR: Grand requires Xcode command line tools to be installed.")
         sys.exit(1)
 
 if platform.system() == "win32":
