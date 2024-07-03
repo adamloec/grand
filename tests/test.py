@@ -41,3 +41,6 @@ from grand.utils import Colors
 # model.view()
 
 from grand.device import Device
+
+d = Device("gpu")
+print(d.add(int(2), int(2)))

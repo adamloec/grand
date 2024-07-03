@@ -1,6 +1,4 @@
-from . import _gcuda
-
-print(_gcuda.CudaUtils.cudaDeviceExists(0))
+from . import _gmetal
 
 class Device:
     def __init__(self, device_type):
@@ -9,3 +7,6 @@ class Device:
     def allocate(self, nbytes):
         if self.device_type == 'gpu':
             pass
+
+    def add(self, a, b):
+        return _gmetal.add(a, b)
