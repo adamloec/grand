@@ -6,6 +6,7 @@
 #
 
 import numpy as np
+from device.device_factory import DeviceFactory
 
 class Tensor:
     """
